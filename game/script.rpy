@@ -1,502 +1,574 @@
-﻿# ---------- CONFIG / VARIABLES ----------
+﻿# ------------------------------------------------------------
+# CONFIG & VARIABLES
+# ------------------------------------------------------------
 
-define v = Character("Victor", color="#e0d0c0")
-define c = Character("Monster", color="#c0ff80")
-define n = Character(None)  # narrator
+# Optional: make text type out instead of instant (tweak or remove if you don't like it)
+define config.default_text_cps = 40  # characters per second
 
+# Characters
+define v = Character("Victor", color="#e0d0ff")
+define m = Character("Creature", color="#ffb0b0")
+define n = Character("Narrator", color = "#ffffff")  # unnamed narrator (just text)
+define config.default_text_cps = 30
+
+
+# Hearts (health / sanity)
 default hearts = 3
 define max_hearts = 3
 
-# Optional: slightly slower text for dramatic effect
-# $ preferences.text_cps = 40
+# ------------------------------------------------------------
+# IMAGES: BACKGROUNDS
+# ------------------------------------------------------------
 
-# ---------- IMAGES ----------
+image bg orkney_coast = "images/backgrounds/bg_orkney.png"
+image bg lab_night    = "images/backgrounds/bg_lab_night.png"
+image bg window       = "images/backgrounds/bg_casement.png"
+image bg bedroom      = "images/backgrounds/bg_bedroom.png"
+image bg beach_night  = "images/backgrounds/bg_coastline.png"
+image bg lab_empty = "images/backgrounds/bg_lab_empty.png"
 
-# BACKGROUNDS
-image bg_orkney = "backgrounds/bg_orkney.png"
-image bg_lab_night = "backgrounds/bg_lab_night.png"
-image bg_lab_night_empty = "backgrounds/bg_lab_empty.png"
-image bg_window_casement = "backgrounds/bg_casement.png"
-image bg_bedroom = "backgrounds/bg_bedroom.png"
-image bg_beach_night = "backgrounds/bg_coastline.png"
+# ------------------------------------------------------------
+# IMAGES: VICTOR SPRITES (OPEN/CLOSED MOUTHS)
+# ------------------------------------------------------------
 
-# VICTOR SPRITES
-image victor neutral = "characters/victor/victor_neutral_open.png"
-image victor tired = "characters/victor/victor_tired.png"
-image victor concerned = "characters/victor/victor_anxious_closed.png"
-image victor worried = "characters/victor/victor_tired.png"
-image victor anxious = "characters/victor/victor_anxious_open.png"
-image victor panic = "characters/victor/victor_angry_closed.png"
-image victor angry = "characters/victor/victor_angry_open.png"
-image victor furious = "characters/victor/victor_furious_open.png"
-image victor collapsed = "characters/victor/victor_neutral_closed.png" #placeholder
+image victor neutral_open      = "images/characters/victor/victor_neutral_open.png"
+image victor neutral_closed    = "images/characters/victor/victor_neutral_closed.png"
 
-# CREATURE SPRITES
-image creature neutral = "characters/monster/monster_neutral_open.png"
-image creature grin = "characters/monster/monster_grin.png"
-image creature angry = "characters/monster/monster_angry_open.png"
-image creature wrath = "characters/monster_despair_closed.png"
-image creature despair = "characters/monster/monster_despair_open.png"
-image creature shadow = "characters/monster/monster_shadowed_open.png"
+image victor tired             = "images/characters/victor/victor_tired.png"      # no open/closed
 
-# UI HEARTS
-image ui_heart_full = "hearts/full_heart.png"
-image ui_heart_empty = "hearts/empty_heart.png"
+image victor concerned_open    = "images/characters/victor/victor_anxious_open.png"
+image victor concerned_closed  = "images/characters/victor/victor_anxious_closed.png"
 
-# ---------- HEART HUD SCREEN ----------
+image victor anxious_open      = "images/characters/victor/victor_anxious_open.png"
+image victor anxious_closed    = "images/characters/victor/victor_anxious_closed.png"
 
-screen hud():
-    hbox:
-        xalign 0.03
-        yalign 0.03
-        spacing 4
-        for i in range(max_hearts):
-            if i < hearts:
-                add "ui_heart_full":
+image victor panic_open        = "images/characters/victor/victor_anxious_open.png"
+image victor panic_closed      = "images/characters/victor/victor_anxious_closed.png"
+
+image victor angry_open        = "images/characters/victor/victor_angry_open.png"
+image victor angry_closed      = "images/characters/victor/victor_angry_closed.png"
+
+image victor furious_open      = "images/characters/victor/victor_angry_open.png"
+image victor furious_closed    = "images/characters/victor/victor_angry_closed.png"
+
+
+# ------------------------------------------------------------
+# IMAGES: CREATURE SPRITES (OPEN/CLOSED MOUTHS WHERE PROVIDED)
+# ------------------------------------------------------------
+
+image creature neutral_open    = "images/characters/monster/monster_neutral_open.png"
+image creature neutral_closed  = "images/characters/monster/monstere_neutral_closed.png"
+
+image creature grin            = "images/characters/monster/monstergrin.png"
+
+image creature angry_open      = "images/characters/monster/monster_angry_open.png"
+image creature angry_closed    = "images/characters/monster/monster_angry_closed.png"
+
+image creature despair_open    = "images/characters/monster/monster_despair_open.png"
+image creature despair_closed  = "images/characters/monster/monster_despair_closed.png"
+
+image creature shadowed_open   = "images/characters/monster/monster_shadowed_open.png"
+image creature shadowed_closed = "images/characters/monster/monster_shadowed_closed.png"
+
+
+# ------------------------------------------------------------
+# IMAGES: UI (HEARTS)
+# ------------------------------------------------------------
+
+image heart_full  = "hearts/full_heart.png"
+image heart_empty = "hearts/empty_heart.png"
+
+# NOTE: If hearts are too big, you can scale them like this:
+# image heart_full_small  = im.Scale("images/ui/heart_full.png", 48, 48)
+# image heart_empty_small = im.Scale("images/ui/heart_empty.png", 48, 48)
+# Then use heart_full_small / heart_empty_small in the HUD instead.
+
+
+# ------------------------------------------------------------
+# AUDIO DEFINITIONS
+# (Adjust filenames to match your actual files in /audio)
+# ------------------------------------------------------------
+
+define audio.wind         = "audio/windy_heavy.wav"
+define audio.rain         = "audio/rain_heavy_outside.wav"
+define audio.rain_inside  = "audio/rain_heavy_outside.wav"
+define audio.thunder      = "audio/thunder.wav"
+define audio.waves        = "audio/waves.mp3"
+define audio.door_creak   = "audio/door_creek.mp3"
+define audio.footsteps    = "audio/steps_heavy.mp3"
+define audio.flesh_tear   = "audio/flesh_tear.mp3"
+define audio.correct_sfx  = "audio/correct.mp3"
+define audio.wrong_sfx    = "audio/wrong.mp3"
+
+# NOTE: if you only want part of an sfx, you can:
+# - trim it in an external audio editor, OR
+# - lower the volume and stop it quickly using `queue` / `stop sound`.
+
+
+# ------------------------------------------------------------
+# TRANSFORMS (POSITION / SIZE)
+# ------------------------------------------------------------
+
+transform left_side:
+    xalign 0.2
+    yalign 1.0
+
+transform right_side:
+    xalign 0.8
+    yalign 1.0
+
+# Example: to custom position or resize a sprite, you can do:
+# show victor neutral_open at left_side:
+#     zoom 0.9
+# or:
+# show creature shadowed_open at Position(xalign=0.8, yalign=1.0)
+
+
+# ------------------------------------------------------------
+# HEART HUD SCREEN
+# ------------------------------------------------------------
+
+screen heart_hud():
+    zorder 100
+    frame:
+        xalign 0.02
+        yalign 0.02
+        background None
+        hbox:
+            spacing 4
+
+            # full hearts
+            for i in range(hearts):
+                add "heart_full":
                     zoom 0.15
-            else:
-                add "ui_heart_empty":
+
+            # empty hearts
+            for i in range(max_hearts - hearts):
+                add "heart_empty":
                     zoom 0.15
 
-# ---------- START LABEL (ORKNEY ONLY) ----------
+
+# ------------------------------------------------------------
+# TRIVIA HELPER LABEL
+# ------------------------------------------------------------
+
+label lose_heart:
+    $ hearts -= 1
+    play sound audio.wrong_sfx
+    if hearts <= 0:
+        jump game_over_panic
+    return
+
+# ------------------------------------------------------------
+# START & MAIN ORKNEY FLOW
+# ------------------------------------------------------------
 
 label start:
 
-    # Reset hearts at the beginning of the Orkney sequence
-    $ hearts = 3
-    show screen hud
-    # SCENE 1 – Orkney establishing, context
-    play music  "audio/wind_light.wav" fadein 1.5 loop
-    scene bg_orkney
-    with fade
+    # Show HUD for hearts always
+    show screen heart_hud
 
-    n "Victor Frankenstein had fled far to the north, to one of the remotest of the Orkney islands."
-    n "The island was little more than a rock, beaten constantly by the waves and barren of almost all life."
-    n "Only a few miserable cottages dotted the shoreline, and a handful of gaunt inhabitants lived off oatmeal and what they could bring from the mainland."
+    # Optional ambient sound
+    play music audio.wind fadein 1.0
 
-    show victor tired at left
-    v "A fitting place to bury myself in work... and in my own horror."
+    # Scene 1: Orkney establishing
+    scene bg orkney_coast with fade
 
-    n "Here he had chosen to continue a task he now dreaded: the making of a second creature."
+    n "Victor Frankenstein has fled south and east, then north, until the world itself seems to narrow into rock and sea."
+    n "The Orkney Islands are desolate, battered by waves and wind, far from Geneva, far from Switzerland, and even further from the innocence he once imagined he possessed."
 
-    # SCENE 2 – Routine / isolation summary (short, mostly narration)
-    scene bg_lab_night  # you can swap to day version later if you create one
-    with dissolve
+    n "Here, on one of the remotest of these islands, he has chosen a barren rock as the scene of his labours."
+    n "The soil barely feeds a few miserable cows, and the island’s handful of inhabitants live in poverty, numb to suffering."
+    n "To them he is a strange lodger with a small hired hut; to himself, he is a man attempting to correct—or compound—a monstrous error."
 
-    n "He lodged in a small hut, its rooms rough and barely repaired, and turned one of them into a laboratory."
-    n "By day he worked among instruments and jars; by evening he walked along the stony beach, listening to the ocean roar at his feet."
-    show victor concerned at left
-    v "Switzerland feels like another world. This desolate rock is all I deserve."
+    # Move into lab scene (evening)
+    jump orkney_lab_evening
 
-    # We jump forward in time to when the work is well underway and horrible to him.
-    n "As his labours advanced, the work grew more loathsome. Sometimes he could not bring himself to enter the lab for days; at other times, he toiled day and night."
-    show victor worried at left
-    v "The first time, frenzy blinded me to what I was doing..."
-    v "...but now I see every detail clearly, and it sickens me."
 
-    # ---- SCENE 3 – Evening in the lab (start of actual passage, trivia begins after reflections) ----
+# ------------------------------------------------------------
+# ORKNEY LAB – EVENING REFLECTION + TRIVIA
+# ------------------------------------------------------------
 
-    scene bg_lab_night
-    with fade
+label orkney_lab_evening:
 
-    play sound  "audio/rain_heavy_inside.wav" loop
-    # (optionally mix rain+wind in your mixer; or just keep one)
+    stop music fadeout 1.0
+    play ambient audio.rain_inside
 
-    show victor tired at left
-    n "One evening, Victor sat alone in his laboratory. The sun had set; the moon was rising out of the sea beyond the window."
-    n "The light was too dim for careful work, and he hesitated between resting and forcing himself to continue."
+    scene bg lab_night with fade
 
-    show victor concerned
-    v "If I stop now, I delay the end of this horror."
-    v "If I continue, I may set something worse loose on the world."
+    show victor tired at left_side
+    n "Victor has spent his mornings labouring over the filthy process of constructing a second being, and his evenings pacing the beach, listening to the roar of the waves."
+    n "But tonight, he sits in his laboratory, tools idle, eyes unfocused."
 
-    # ---- SCENE 4 – Reflection on first creation (Trivia Q1) ----
+    show victor neutral_open at left_side
+    v "Three years ago... I was engaged in the same manner."
 
-    n "His thoughts returned to his first experiment, three years before, and to the being he had drawn into existence."
-    show victor worried
-    v "That single act has filled my life with remorse."
+    show victor neutral_closed at left_side
+    n "He remembers the first experiment: the ecstatic frenzy, the feverish anticipation, and then the horror of the creature's awakening."
 
-    # TRIVIA 1 – about the first creature & Victor's feeling
+    show victor concerned_open at left_side
+    v "I created a fiend whose barbarity has desolated my heart, and filled it with a remorse that has never left me."
+
+    show victor concerned_closed at left_side
+    n "Now he prepares to repeat the experiment—this time with a companion for the being he loathes and fears."
+
+    # --- TRIVIA 1: about his first creation / remorse ---
     call trivia_1
 
-    # ---- SCENE 5 – Fears about the female & race of devils (Trivia Q2, Q3) ----
+    show victor anxious_open at left_side
+    v "Another being... of whose dispositions I am entirely ignorant."
 
-    show victor anxious
-    n "He looked toward the shape on the table, the half-finished female he laboured to animate."
-    v "I know nothing of her mind. She might be more cruel than the first..."
-    v "He promised to hide himself from mankind. She never did."
-    v "She could reject him, or flee to men, or help him people the world with more like them."
+    show victor anxious_closed at left_side
+    n "He imagines her ten thousand times more malignant than her mate, delighting in murder and wretchedness."
 
-    # TRIVIA 2 – about his fear of their offspring
+    show victor neutral_open at left_side
+    v "He swore to quit the neighbourhood of man... but she has made no such promise."
+
+    show victor neutral_closed at left_side
+    n "Victor realises the compact he made was with one creature only; the second might refuse to vanish into deserts."
+
+    # --- TRIVIA 2: about the compact / promise ---
     call trivia_2
 
-    show victor anxious
-    n "He imagined them fleeing Europe, only to breed a race that would make human life fearful and uncertain."
-    v "Do I have the right to inflict such a curse on the generations to come?"
+    show victor concerned_open at left_side
+    v "They might even hate each other..."
+    v "He already loathes his own deformity—would he not recoil still more from it in another form?"
 
-    # TRIVIA 3 – about his moral dilemma
+    show victor concerned_closed at left_side
+    n "Victor imagines the female turning away from her mate in disgust, drawn instead to the ‘superior beauty’ of humankind."
+
+    show victor anxious_open at left_side
+    v "Then he would be again alone… exasperated, deserted by one of his own species."
+
+    show victor anxious_closed at left_side
+
+    # --- TRIVIA 3: about the risk of their offspring ---
     call trivia_3
 
-    show victor worried
-    n "He remembered how the creature's arguments had once swayed him, and how its threats had shaken him."
-    n "But now, the wickedness of his promise stood before him with terrible clarity."
+    show victor panic_open at left_side
+    v "A race of devils... children, propagated upon the earth, making human existence precarious and full of terror."
 
-    # ---- SCENE 6 – Creature at the window ----
+    show victor panic_closed at left_side
+    n "For the first time, the full wickedness of his promise bursts upon him."
 
-    play sound "audio/thunder.wav"
-    $ renpy.pause(0.4)
+    show victor anxious_open at left_side
+    v "Had I a right, for my own benefit, to inflict this curse upon everlasting generations?"
 
-    show victor panic
-    n "A shudder ran through him; his heart seemed to fail. Slowly, he looked up toward the window."
+    show victor anxious_closed at left_side
+    n "He shudders to imagine future ages cursing him as their pest, whose selfishness bought peace at the price of the human race."
 
-    scene bg_window_casement
-    with dissolve
-
-    show creature grin at right
-    play sound  "audio/steps_heavy.mp3"
-    n "In the moonlight, the creature's face pressed against the casement, lips twisted in a ghastly grin."
-    n "It had followed him: through forests, caves, and heaths, watching, waiting."
-
-    # ---- SCENE 7 – Bride destroyed ----
-
-    scene bg_lab_night
-    show victor furious at left
-    show creature grin at right
-    with dissolve
-
-    n "As Victor looked at him, the creature's expression showed nothing but malice and treachery."
-    v "Another like you... No. Never again."
-
-    play sound  "audio/flesh_tear.mp3"
-    $ renpy.pause(0.2)
-
-    n "Seized by a kind of madness, he tore apart the unfinished creature, destroying the work on which the dæmon had set his hopes."
-
-    show creature despair at right
-    n "The wretch saw the ruin of his only chance at companionship and howled with a despair that twisted into revenge."
-
-    # Cut to black, then lab without the body
-    scene black
-    with fade
-    $ renpy.pause(0.8)
-
-    scene bg_lab_night_empty
-    with fade
-
-    n "When the echo of his cry faded, the laboratory seemed emptier than ever. The table lay bare; shreds of the ruined work had been cleared away."
-
-    # ---- SCENE 8 – Victor vows to stop, goes to bedroom ----
-
-    show victor tired at left
-    v "It is done. I will not resume these labours. Not ever."
-
-    scene bg_bedroom
-    with dissolve
-
-    play sound  "audio/rain_heavy_outside.wav"
-    show victor worried at left
-    n "Victor locked the lab behind him and retreated to his small room."
-    n "Alone, with no one to break the gloom, his mind filled with the worst imaginings."
-
-    # ---- SCENE 9 – Waiting, footsteps, creature enters (Trivia Q4) ----
-
-    n "Hours passed. He sat by the window, gazing at the sea, its surface almost motionless under the quiet moon."
-    n "He heard distant voices of fishermen, carried briefly by the breeze, then swallowed again by silence."
-
-    play sound  "audio/run.mp3"
-    n "At last, the sound of oars near the shore reached him. Someone had landed close to the house."
-
-    play sound  "audio/door_creak.mp3"
-    n "A soft creaking at the door below made him tremble from head to foot."
-
-    show victor panic
-    v "It's him... it must be him... I should call for help—no, I can't move..."
-
-    play sound  "audio/steps_heavy.mp3"
-    n "Heavy footsteps approached along the passage. The door to his room opened."
-
-    show creature angry at right
-    with dissolve
-
-    c "You have destroyed the work you began. Do you dare break your promise?"
-    c "I have followed you across countries, through cold and hunger, to see this hope fulfilled."
-
-    # TRIVIA 4 – about where the creature has followed him (Rhine/England/Scotland)
+    # --- TRIVIA 4: about why his fear shifts from the creature’s threats to his own moral responsibility ---
     call trivia_4
 
-    # ---- SCENE 10 – Threats & wedding-night vow (Trivia Q5, Q6, Q7) ----
+    # Move to the window/creature appearance
+    jump orkney_creature_at_window
 
-    show victor angry at left
-    v "Begone. I do break my promise. I will never make another like you."
 
-    show creature wrath at right
-    c "Slave. You are my creator, but I am your master. Obey."
-    c "You believe yourself miserable? I can make your days so wretched that daylight itself will be hateful to you."
+# ------------------------------------------------------------
+# CREATURE AT THE WINDOW & BRIDE DESTRUCTION
+# ------------------------------------------------------------
 
-    # TRIVIA 5 – about the creature's new ruling passion (revenge)
+label orkney_creature_at_window:
+
+    stop ambient fadeout 1.0
+    play ambient audio.wind
+
+    # Victor in lab, looking up
+    scene bg lab_night with fade
+    show victor panic_closed at left_side
+
+    n "Victor trembles; his heart fails within him."
+
+    scene bg window with dissolve
+    play sound audio.thunder
+    n "He looks up. By the light of the rising moon, he sees the dæmon at the casement."
+
+    show creature grin at right_side
+    n "A ghastly grin wrinkles the creature’s lips as he gazes upon Victor, who sits fulfilling the task allotted him."
+
+    show victor panic_open at left_side
+    v "He followed me... through forests, caves, and heaths, and now comes to claim his due."
+
+    show victor panic_closed at left_side
+
+    # Victor’s sensation of madness → destroys bride
+    show victor furious_open at left_side
+    v "Another like him... I cannot—"
+
+    show victor furious_closed at left_side
+    n "His mind reels; with a sensation bordering on madness, Victor thinks of his promise."
+
+    play sound audio.flesh_tear
+    scene black with vpunch
+    n "Trembling with passion, he tears to pieces the thing on which he was engaged."
+
+    # Cut back to lab with empty gurney background
+    scene bg bg_lab_empty with fade
+    # (This is your edited lab background with the body removed.)
+    show creature despair_open at right_side
+    m "—!"
+
+    play sound audio.flesh_tear
+    show creature despair_closed at right_side
+    n "The wretch sees Victor destroy the creature whose future existence meant his only hope of happiness."
+
+    show creature angry_open at right_side
+    m "..."
+
+    show creature angry_closed at right_side
+    n "With a howl of devilish despair and revenge, he withdraws."
+
+    play sound audio.footsteps
+
+    # Victor leaves, locks door, goes to bedroom
+    jump orkney_bedroom_dread
+
+
+# ------------------------------------------------------------
+# BEDROOM DREAD + DOOR CREEK + CONFRONTATION
+# ------------------------------------------------------------
+
+label orkney_bedroom_dread:
+
+    play ambient audio.rain_inside
+
+    scene bg bedroom with fade
+    show victor tired at left_side
+
+    n "Victor locks the laboratory door and vows never to resume his labours. Alone in his small room, he finds no comfort."
+
+    n "Hours pass as he sits near the window, gazing at the almost motionless sea under the quiet moon."
+
+    play sound audio.waves
+    n "The silence is so profound that the paddling of oars near the shore startles him."
+
+    play sound audio.footsteps
+    n "Footsteps, a door creaking softly… he trembles from head to foot, knowing—before he admits it—who approaches."
+
+    play sound audio.door_creak
+
+    show creature shadowed_open at right_side
+    m "You have destroyed the work which you began. Do you dare break your promise?"
+
+    show creature shadowed_closed at right_side
+    show victor anxious_open at left_side
+    v "Begone! I do break my promise. Never will I create another like yourself, equal in deformity and wickedness."
+
+    show victor anxious_closed at left_side
+
+    show creature angry_open at right_side
+    m "Slave, I before reasoned with you; you have proved yourself unworthy of my condescension."
+    m "Remember that I have power. You are my creator, but I am your master. Obey!"
+
+    show creature angry_closed at right_side
+
+    show victor furious_open at left_side
+    v "The hour of my weakness is past, and the period of your power is arrived."
+    v "Your threats cannot move me to an act of wickedness. Begone!"
+
+    show victor furious_closed at left_side
+
+    # --- TRIVIA 5: about the nature of their power dynamic / threat ---
     call trivia_5
 
-    c "Shall every man have his wife, and each beast its mate, and I be alone?"
-    c "You can tear away my other hopes, but revenge remains—dearer than light or food."
+    show creature despair_open at right_side
+    m "Shall each man find a wife for his bosom, and each beast its mate—and I be alone?"
+    m "Beware. Revenge remains—dearer than light or food."
 
-    show victor furious at left
-    v "I will not set loose another demon on the earth. Go, and do not poison the air with your words."
+    show creature despair_closed at right_side
 
-    show creature grin at right
-    c "Very well. I go. But remember: I shall be with you on your wedding-night."
+    show creature shadowed_open at right_side
+    m "It is well. I go; but remember—I shall be with you on your wedding-night."
 
-    # TRIVIA 6 – about what night he names
-    call trivia_6
+    show creature shadowed_closed at right_side
 
-    show victor furious
+    show victor furious_open at left_side
     v "Villain! Before you sign my death-warrant, be sure you are yourself safe!"
 
-    scene bg_beach_night
-    with dissolve
+    show victor furious_closed at left_side
+    n "Victor lunges, but the creature eludes him and flees."
 
-    play sound  "audio/run.mp3"
-    n "Victor rushed to the shore in time to see a small boat darting away into the darkness, the creature's form shrinking into the distance."
+    play sound audio.footsteps
+    play sound audio.door_creak
 
-    # ---- SCENE 11 – Aftermath on the island (no more trivia, just closing) ----
+    scene bg beach_night with fade
+    play sound audio.waves
+    n "In moments, Victor sees a small boat shoot across the waters with arrowy swiftness, vanishing amidst the waves."
 
-    scene bg_bedroom
-    show victor anxious at left
-    with fade
+    jump orkney_after_confrontation
 
-    n "Silence returned, but the creature's words echoed in his mind."
-    v "Wedding-night... so that is when he will strike."
 
-    n "He paced the room in agitation, imagining a thousand cruel possibilities."
-    n "At last, rage sank into a deeper despair, and the night slowly gave way to dawn."
+# ------------------------------------------------------------
+# AFTER CONFRONTATION – RAGE, DESPAIR, RESOLUTION
+# ------------------------------------------------------------
 
-    scene bg_beach_night
-    with dissolve
+label orkney_after_confrontation:
 
-    n "The next day he walked the shore like a restless specter, half wishing to remain on that barren rock forever."
-    n "But a letter summoned him away, and before he could depart he had to put his instruments and the last traces of his work in order."
+    scene bg bedroom with fade
+    show victor anxious_closed at left_side
 
-    n "The decision not to resume his labours never wavered. For the first time, the idea of creating another being seemed clearly, absolutely wrong to him."
+    n "All is again silent, but the creature’s words ring in his ears."
 
-    # ORKNEY SEQUENCE END
-    n "Thus ended Victor's work on the Orkney island—but the creature's threat still clung to him, like a shadow."
+    show victor anxious_open at left_side
+    v "\"I will be with you on your wedding-night.\""
+
+    show victor anxious_closed at left_side
+    n "He burns to pursue the murderer of his peace and cast him into the sea, yet the opportunity is gone."
+
+    show victor tired at left_side
+    n "He paces his room, imagination conjuring a thousand images to torment him."
+
+    # --- TRIVIA 6: about what Victor fears most (himself vs Elizabeth vs humanity) ---
+    call trivia_6
+
+    show victor panic_open at left_side
+    v "When that hour comes, I shall die—and at once satisfy and extinguish his malice."
+
+    show victor panic_closed at left_side
+    n "The thought does not move him to fear; but when he thinks of Elizabeth, tears—his first in months—stream from his eyes."
+
+    show victor neutral_open at left_side
+    v "I will not fall before my enemy without a bitter struggle."
+
+    show victor neutral_closed at left_side
+
+    # At this point, Orkney section is complete; you can later jump to montage/minigame/etc.
+    n "For now, the barren rock of Orkney still holds him between guilt and defiance, between the memory of one monster—and the promise of another."
 
     return
 
 
-# ---------- TRIVIA LABELS (hearts + loop until correct) ----------
+# ------------------------------------------------------------
+# TRIVIA LABELS
+# (All use pattern: wrong answer -> hearts-- and repeat question;
+#  right answer -> correct_sfx and continue.)
+# ------------------------------------------------------------
 
 label trivia_1:
-    # About Victor's feeling after the first creation
-    show victor concerned
-    n "Thinking back to his first experiment, how did Victor feel about what he had done?"
+    # About his first experiment & remorse
+    n "Victor reflects that his first creation left him with..."
 
     menu:
-        "He looked back on it with pride.":
-            $ hearts -= 1
-            play sound "audio/wrong.mp3"
-            show victor anxious
-            n "The very idea sickens him. Even his memory rebels at that thought."
-            if hearts <= 0:
-                jump game_over_hearts
+        "a) Pride in his scientific genius":
+            call lose_heart
             jump trivia_1
-
-        "It filled his life with remorse and horror.":
-            play sound "audio/correct.mp3"
-            show victor worried
-            n "He remembered only remorse: the barbarity of the creature, and the guilt that had never faded."
+        "b) Unparalleled barbarity that desolated his heart with remorse":
+            play sound audio.correct_sfx
+            n "He cannot forget that his first work brought only grief and guilt."
             return
-
-        "He felt indifferent; it was only a scientific result.":
-            $ hearts -= 1
-            play sound "audio/wrong.mp3"
-            show victor anxious
-            n "If only it had been that simple. His heart has never been indifferent to the consequences."
-            if hearts <= 0:
-                jump game_over_hearts
+        "c) A chance to impress the philosophers of Ingolstadt":
+            call lose_heart
             jump trivia_1
-
 
 label trivia_2:
-    # About fear of offspring
-    show victor anxious
-    n "What future possibility terrified Victor most as he imagined finishing the female?"
-
+    n "Whose promise is Victor now questioning as he works on the bride?"
     menu:
-        "That she would immediately kill him in the lab.":
-            $ hearts -= 1
-            play sound "audio/wrong.mp3"
-            show victor panic
-            n "He feared for many lives, not only his own."
-            if hearts <= 0:
-                jump game_over_hearts
+        "a) His own vow never to repeat the experiment":
+            call lose_heart
             jump trivia_2
-
-        "That together they would have children and form a race of beings like themselves.":
-            play sound "audio/correct.mp3"
-            show victor worried
-            n "He pictured generations of such beings, making human life precarious and full of terror."
+        "b) The creature’s promise to quit the neighbourhood of man, which the bride might refuse to share":
+            play sound audio.correct_sfx
+            n "The compact was made with one being only; the second has no such obligation."
             return
-
-        "That she would be too gentle, and pity mankind.":
-            $ hearts -= 1
-            play sound "audio/wrong.mp3"
-            show victor anxious
-            n "Gentleness was not what haunted him. It was the thought of multiplying his mistake."
-            if hearts <= 0:
-                jump game_over_hearts
+        "c) Elizabeth’s promise to wait for him in Geneva":
+            call lose_heart
             jump trivia_2
-
 
 label trivia_3:
-    # About his moral question
-    show victor concerned
-    n "What question about his own right troubled Victor most?"
-
+    # About offspring / race of devils
+    n "What future consequence most horrifies Victor as he imagines the pair together?"
     menu:
-        "Whether he had the right to disobey the creature.":
-            $ hearts -= 1
-            play sound "audio/wrong.mp3"
-            show victor anxious
-            n "It was not obedience that obsessed him; it was what he might do to all mankind."
-            if hearts <= 0:
-                jump game_over_hearts
+        "a) That they will live quietly in the new world, forgotten by all":
+            call lose_heart
             jump trivia_3
-
-        "Whether he had the right to bring such a curse on future generations for his own peace.":
-            play sound "audio/correct.mp3"
-            show victor worried
-            n "He imagined ages to come cursing his name as their pest."
+        "b) That they will have children and propagate a race of devils upon the earth":
+            play sound audio.correct_sfx
+            n "He imagines future generations cursing him for unleashing such a race."
             return
-
-        "Whether he had the right to leave the island before finishing his work.":
-            $ hearts -= 1
-            play sound "audio/wrong.mp3"
-            show victor anxious
-            n "The island itself was not the true question; the fate of humanity was."
-            if hearts <= 0:
-                jump game_over_hearts
+        "c) That they will become celebrated curiosities in human society":
+            call lose_heart
             jump trivia_3
-
 
 label trivia_4:
-    # About where the creature followed him
-    show creature angry at right
-    n "The creature lists the places he followed Victor through. Which is one of them?"
-
+    # About moral responsibility shift
+    n "What changes in Victor’s understanding of his promise in this moment?"
     menu:
-        "Along the shores of the Rhine and over its hills.":
-            play sound "audio/correct.mp3"
-            show creature neutral
-            n "He had crept along the Rhine and over its summits, haunting Victor's journey."
+        "a) He realises the creature never truly meant his threats.":
+            call lose_heart
+            jump trivia_4
+        "b) He sees for the first time that the wickedness lies in his own promise, not just in the creature’s demands.":
+            play sound audio.correct_sfx
+            n "He finally recognises that he himself may become the ‘pest’ of future ages."
             return
-
-        "Through the deserts of Africa and across the Alps.":
-            $ hearts -= 1
-            play sound "audio/wrong.mp3"
-            show victor anxious at left
-            n "That is not how the creature describes his path."
-            if hearts <= 0:
-                jump game_over_hearts
+        "c) He believes that time will erase his guilt regardless of his actions.":
+            call lose_heart
             jump trivia_4
-
-        "Across the frozen seas of the Arctic before Orkney.":
-            $ hearts -= 1
-            play sound "audio/wrong.mp3"
-            show victor anxious
-            n "The Arctic comes later in the story; this is not yet that part of his pursuit."
-            if hearts <= 0:
-                jump game_over_hearts
-            jump trivia_4
-
 
 label trivia_5:
-    # About the creature's ruling passion
-    show creature wrath at right
-    n "The creature says that, though other hopes can be destroyed, one passion remains to him. What is it?"
-
+    n "How does the creature now describe the power between creator and created?"
     menu:
-        "Revenge, dearer than light or food.":
-            play sound "audio/correct.mp3"
-            show creature wrath
-            n "Revenge becomes his only sustaining desire."
+        "a) Victor remains master, and the creature is his humble servant.":
+            call lose_heart
+            jump trivia_5
+        "b) Victor is creator in name only; the creature now claims to be the true master through power to cause misery.":
+            play sound audio.correct_sfx
+            n "The creature insists he can make Victor so wretched that daylight will be hateful."
             return
-
-        "Love, which he hopes to find among men.":
-            $ hearts -= 1
-            play sound "audio/wrong.mp3"
-            show victor anxious at left
-            n "Love was what he once sought, but it has curdled into something darker."
-            if hearts <= 0:
-                jump game_over_hearts
+        "c) They are equals who can reason calmly together.":
+            call lose_heart
             jump trivia_5
-
-        "Ambition, to rule over mankind.":
-            $ hearts -= 1
-            play sound "audio/wrong.mp3"
-            show creature angry
-            n "He does not speak of ruling men—only of making Victor suffer as he has suffered."
-            if hearts <= 0:
-                jump game_over_hearts
-            jump trivia_5
-
 
 label trivia_6:
-    # About the wedding-night threat
-    show creature grin at right
-    n "When the creature finally leaves, what moment does he name as the time he will 'be with' Victor?"
-
+    # About Victor's fear and Elizabeth
+    n "When the creature promises to be with him on his wedding-night, what thought finally brings Victor to tears?"
     menu:
-        "On Victor's wedding-night.":
-            play sound "audio/correct.mp3"
-            show victor panic at left
-            n "Those words fix a date in Victor's mind, turning joy into a sentence."
-            return
-
-        "On the night Victor finishes a new creature.":
-            $ hearts -= 1
-            play sound "audio/wrong.mp3"
-            show victor anxious
-            n "Victor has already destroyed his work; the creature's threat is tied to something else."
-            if hearts <= 0:
-                jump game_over_hearts
+        "a) His own death, which he accepts almost calmly.":
+            call lose_heart
             jump trivia_6
-
-        "On the night Victor returns to Switzerland.":
-            $ hearts -= 1
-            play sound "audio/wrong.mp3"
-            show victor anxious
-            n "The creature chooses something far more personal than a place."
-            if hearts <= 0:
-                jump game_over_hearts
+        "b) Elizabeth’s endless sorrow if she loses him so barbarously.":
+            play sound audio.correct_sfx
+            n "He weeps not for himself, but for the grief Elizabeth will endure."
+            return
+        "c) The possibility that the creature will forgive him.":
+            call lose_heart
             jump trivia_6
 
 
-# ---------- GAME OVER (HEARTS REACHED ZERO) ----------
+# ------------------------------------------------------------
+# GAME OVER (PANIC / GUILT DEATH ENDING)
+# ------------------------------------------------------------
 
-label game_over_hearts:
+label game_over_panic:
 
-    hide screen hud
-    scene bg_bedroom
-    with fade
+    stop music
+    stop ambient
 
-    show victor collapsed at center
-    play sound "audio/run.mp3"
-    $ renpy.pause(0.5)
+    scene bg lab_night with fade
+    show victor panic_open at left_side
 
-    n "Victor's thoughts spun out of control. Memories blurred, and the weight of his guilt crushed down on him."
-    v "Why can't I recall what has happened? Why does everything slip away from me...?"
-    n "His nerves, worn thin by sleepless nights, fear, and solitude, finally gave way."
-    n "He collapsed where he stood, swallowed by exhaustion and dread."
+    v "Why can I not remember? Why does my mind recoil from what I myself have done?"
 
-    scene black
-    with fade
+    show victor panic_closed at left_side
+    n "The strain of his reflections shatters what remains of his strength."
 
-    n "{b}GAME OVER{/b}"
-    n "Victor's mind breaks under the strain long before the creature's threat can be fulfilled."
+    scene black with fade
+    n "On that barren rock, consumed by guilt and terror, Victor’s body finally yields where his conscience could not."
 
-    menu:
-        "Return to Main Menu":
-            return
+    # Simple game over screen
+    call screen game_over_screen
 
-        "Restart the Orkney sequence":
-            jump start
+    return
+
+
+screen game_over_screen():
+    modal True
+    frame:
+        align (0.5, 0.5)
+        vbox:
+            spacing 20
+            text "GAME OVER" size 60 xalign 0.5
+            text "Victor collapses under the weight of guilt and dread." xalign 0.5
+            text "You have exhausted his strength." xalign 0.5
+
+            textbutton "Return to Main Menu" action MainMenu() xalign 0.5
+            textbutton "Restart Orkney Scene" action Start() xalign 0.5
