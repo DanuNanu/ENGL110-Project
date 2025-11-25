@@ -16,6 +16,9 @@ define n = Character("Narrator", color = "#ffffff")  # unnamed narrator (just te
 default hearts = 3
 define max_hearts = 3
 
+
+
+
 # ------------------------------------------------------------
 # IMAGES: BACKGROUNDS
 # ------------------------------------------------------------
@@ -25,7 +28,7 @@ image bg lab_night    = "images/backgrounds/bg_lab_night.png"
 image bg window       = "images/backgrounds/bg_casement.png"
 image bg bedroom      = "images/backgrounds/bg_bedroom.png"
 image bg beach_night  = "images/backgrounds/bg_coastline.png"
-image bg lab_empty = "images/backgrounds/bg_lab_empty.png"
+image bg lab_empty =    "images/backgrounds/bg_lab_empty.png"
 
 # ------------------------------------------------------------
 # IMAGES: VICTOR SPRITES (OPEN/CLOSED MOUTHS)
@@ -59,7 +62,7 @@ image victor furious_closed    = "images/characters/victor/victor_angry_closed.p
 image creature neutral_open    = "images/characters/monster/monster_neutral_open.png"
 image creature neutral_closed  = "images/characters/monster/monstere_neutral_closed.png"
 
-image creature grin            = "images/characters/monster/monstergrin.png"
+image creature grin            = "images/characters/monster/monster_grin.png"
 
 image creature angry_open      = "images/characters/monster/monster_angry_open.png"
 image creature angry_closed    = "images/characters/monster/monster_angry_closed.png"
@@ -604,16 +607,17 @@ default chase_time_since_spawn = 0.0
 default chase_spawn_min        = 0.9
 default chase_spawn_max        = 1.6
 default chase_bool_change_check = False
+default chase_monster_gap = 400
 
 # Add this code block to your image definitions section
-image arctic_chase_bg_day:
+#image arctic_chase_bg_day:
     # Use the images you defined
-    "bg_chase_day" xpos chase_bg_x1 ypos 0
-    "bg_chase_day" xpos chase_bg_x2 ypos 0
+    #"bg_chase_day" xpos chase_bg_x1 ypos 0
+    #"bg_chase_day" xpos chase_bg_x2 ypos 0
 
-image arctic_chase_bg_night:
-    "bg_chase_night" xpos chase_bg_x1 ypos 0
-    "bg_chase_night" xpos chase_bg_x2 ypos 0
+#image arctic_chase_bg_night:
+    #"bg_chase_night" xpos chase_bg_x1 ypos 0
+    #"bg_chase_night" xpos chase_bg_x2 ypos 0
 
 # Safe “no obstacles” start time
 define chase_safe_start_time = 0.5   # first 5s with no obstacles
@@ -686,7 +690,7 @@ init python:
         if victor_on_ground:
             victor_on_ground = False
             victor_duck = False
-            victor_vy = -1180.0  # upward velocity
+            victor_vy = -1280.0  # upward velocity
 
     def chase_duck_toggle():
         """
@@ -739,15 +743,16 @@ init python:
         Smooth jump physics for Victor.
         Feet remain anchored using yanchor 1.0 in rendering.
         """
-        g = 3500.0  # gravity
+        g = 2850.0  # gravity
 
         # If airborne, apply gravity and update height
         if not store.victor_on_ground:
             store.victor_vy += g * dt
-            store.victor_y  += store.victor_vy * dt
+            store.victor_y  += int(store.victor_vy * dt)
+            store.victor_x = int(store.victor_x+ 0.55)
 
             # Jump ceiling (feet upper limit)
-            max_jump_feet = store.chase_ground_y - 165
+            max_jump_feet = store.chase_ground_y - 170
             if store.victor_y < max_jump_feet:
                 store.victor_y = max_jump_feet
                 # do NOT zero vy here, keep arc smooth
@@ -762,7 +767,7 @@ init python:
         """
         Very simple AI so the monster always dodges perfectly.
         """
-        g = 3500.0
+        g = 2850
 
         # Look ahead for the nearest obstacle in front of the monster
         lookahead = None
@@ -779,7 +784,7 @@ init python:
                 if dist < 260 and store.monster_on_ground:
                     store.monster_on_ground = False
                     store.monster_duck = False
-                    store.monster_vy = -1180
+                    store.monster_vy = -1280
                 else:
                     store.monster_duck = False
             else:
@@ -794,9 +799,10 @@ init python:
         # Apply jump physics
         if not store.monster_on_ground:
             store.monster_vy += g * dt
-            store.monster_y  += store.monster_vy * dt
+            store.monster_y  += int(store.monster_vy * dt)
+            store.monster_x = int(store.monster_x + 0.35)
 
-            max_jump_feet = store.chase_ground_y - 165
+            max_jump_feet = store.chase_ground_y - 170
             if store.monster_y < max_jump_feet:
                 store.monster_y = max_jump_feet
 
@@ -849,8 +855,8 @@ init python:
         # ----- Obstacle spawning (after safe start period) -----
         store.chase_time_since_spawn += dt
         if store.chase_elapsed > chase_safe_start_time:
-            min_gap = max(0.38, 0.85 / store.chase_speed_scale)
-            max_gap = max(0.52, 1.15 / store.chase_speed_scale)
+            min_gap= max(0.46, 0.92/ store.chase_speed_scale)
+            max_gap = max(0.68, 1.32 / store.chase_speed_scale)
             gap = random.uniform(min_gap, max_gap)
             if store.chase_time_since_spawn >= gap:
                 _spawn_obstacle()
@@ -951,7 +957,7 @@ screen chase_start_menu():
 screen chase_game():
     tag chase_game
     modal True
-    
+    add Solid("#0000")
     # --- DAY/NIGHT TRANSITION (Controls the Master Layer) ---
     # This must be run on every frame update (the timer handles the update check)
     # --- 1. DAY/NIGHT TRANSITION (Controls the Master Layer) ---
@@ -1086,6 +1092,7 @@ screen chase_game():
 
 label arctic_chase_entry:
     # Simple start menu (Start / Quit)
+    window hide
     $ choice = renpy.call_screen("chase_start_menu")
     if choice != "start":
         return
@@ -1109,7 +1116,7 @@ label arctic_chase_entry:
 # ------------------------------------------------------------
 
 label arctic_chase_exhaustion:
-
+    window show
     scene black with fade
     n "On the desolate Arctic ice, Victor’s strength finally fails."
     n "The endless pursuit, the cold, and his own relentless guilt drain the last of his will."
@@ -1124,7 +1131,7 @@ label arctic_chase_exhaustion:
 # ------------------------------------------------------------
 
 label arctic_chase_montage:
-
+    window show
     scene black with fade
     n "Victor staggers onward, refusing to yield. The fiend remains always a little ahead, a shadow taunting him across the endless ice."
     n "Days blur into nights; the chase becomes his whole world."
