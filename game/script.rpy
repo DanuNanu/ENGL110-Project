@@ -580,7 +580,7 @@ default chase_day          = True
 default chase_day_timer    = 0.0         # day/night switches every 30s
 
 # Ground position (feet)
-default chase_ground_y     = 860
+default chase_ground_y     = config.screen_height-40
 
 # Victor (player)
 default victor_x           = 260
@@ -639,7 +639,7 @@ init python:
         global chase_bg_x1, chase_bg_x2, chase_day, chase_day_timer
         global victor_y, victor_vy, victor_on_ground, victor_duck
         global monster_y, monster_vy, monster_on_ground, monster_duck
-        global chase_obstacles, chase_time_since_spawn
+        global chase_obstacles, chase_time_since_spawn, chase_bool_change_check
 
         chase_state          = "ready"
         chase_elapsed        = 0.0
@@ -686,7 +686,7 @@ init python:
         if victor_on_ground:
             victor_on_ground = False
             victor_duck = False
-            victor_vy = -1200.0   # upward velocity
+            victor_vy = -1180.0  # upward velocity
 
     def chase_duck_toggle():
         """
@@ -705,6 +705,12 @@ init python:
         no impossible overlapping combo.
         """
         kind = random.choice(["stalagmite", "bird"])
+        if len(store.chase_obstacles) >= 2:
+            last1 = store.chase_obstacles[-1]["kind"]
+            last2 = store.chase_obstacles[-2]["kind"]
+            if last1 == last2 == kind:
+                kind = "bird" if kind == "stalagmite" else "stalagmite"
+
         x = config.screen_width + 200
 
         # Basic sizing/position
@@ -730,17 +736,21 @@ init python:
 
     def _update_victor(dt):
         """
-        Victor physics: jump arc & landing.
+        Smooth jump physics for Victor.
+        Feet remain anchored using yanchor 1.0 in rendering.
         """
-        g = 2500.0
+        g = 3500.0  # gravity
+
+        # If airborne, apply gravity and update height
         if not store.victor_on_ground:
             store.victor_vy += g * dt
             store.victor_y  += store.victor_vy * dt
 
-            # Limit how high feet can go (prevents teleport offscreen)
-            max_jump_feet = store.chase_ground_y - 260
+            # Jump ceiling (feet upper limit)
+            max_jump_feet = store.chase_ground_y - 165
             if store.victor_y < max_jump_feet:
                 store.victor_y = max_jump_feet
+                # do NOT zero vy here, keep arc smooth
 
             # Landing
             if store.victor_y >= store.chase_ground_y:
@@ -752,7 +762,7 @@ init python:
         """
         Very simple AI so the monster always dodges perfectly.
         """
-        g = 2500.0
+        g = 3500.0
 
         # Look ahead for the nearest obstacle in front of the monster
         lookahead = None
@@ -769,7 +779,7 @@ init python:
                 if dist < 260 and store.monster_on_ground:
                     store.monster_on_ground = False
                     store.monster_duck = False
-                    store.monster_vy = -1200.0
+                    store.monster_vy = -1180
                 else:
                     store.monster_duck = False
             else:
@@ -786,10 +796,9 @@ init python:
             store.monster_vy += g * dt
             store.monster_y  += store.monster_vy * dt
 
-            max_jump_feet = store.chase_ground_y - 280
+            max_jump_feet = store.chase_ground_y - 165
             if store.monster_y < max_jump_feet:
                 store.monster_y = max_jump_feet
-                store.monster_vy = 0.0
 
             if store.monster_y >= store.chase_ground_y:
                 store.monster_y = store.chase_ground_y
@@ -813,14 +822,14 @@ init python:
         store.chase_day_timer      += dt
 
         # ----- Day/night cycle (every 30 seconds) -----
-        if store.chase_day_timer >= 10.0:
+        if store.chase_day_timer >= 20.0:
             store.chase_day = not store.chase_day
             store.chase_day_timer = 0.0
             store.chase_bool_change_check = True
 
         # ----- Speed scaling -----
-        store.chase_speed_scale = 1.0 + 0.015 * store.chase_elapsed
-        store.chase_speed       = store.chase_base_speed * store.chase_speed_scale
+        store.chase_speed_scale = 1.0 + 0.016 * store.chase_elapsed
+        store.chase_speed  = store.chase_base_speed * store.chase_speed_scale
         speed = store.chase_speed
 
         # ----- Background scrolling -----
@@ -840,7 +849,9 @@ init python:
         # ----- Obstacle spawning (after safe start period) -----
         store.chase_time_since_spawn += dt
         if store.chase_elapsed > chase_safe_start_time:
-            gap = random.uniform(store.chase_spawn_min, store.chase_spawn_max)
+            min_gap = max(0.38, 0.85 / store.chase_speed_scale)
+            max_gap = max(0.52, 1.15 / store.chase_speed_scale)
+            gap = random.uniform(min_gap, max_gap)
             if store.chase_time_since_spawn >= gap:
                 _spawn_obstacle()
                 store.chase_time_since_spawn = 0.0
@@ -970,8 +981,14 @@ screen chase_game():
 
 
     # ===== GAME LOOP & UPDATE (Timer logic unchanged from last fix) =====
-    timer 0.016 repeat True action If(chase_state == "running", 
-        [Function(chase_update), SetVariable("chase_internal_timer", chase_internal_timer)])
+    timer 0.016 repeat True action If(
+        chase_state == "running",
+        [
+            Function(chase_update),
+            SetVariable("chase_internal_timer", chase_internal_timer),
+            Function(renpy.restart_interaction)
+        ]
+    )
 
     # === BACKGROUND RENDERING (updates every frame) ===
     
@@ -992,9 +1009,8 @@ screen chase_game():
     # ===== OBSTACLES (Corrected Positioning) =====
     for obs in chase_obstacles:
         #text "OBS!" xpos monster_x ypos obs["y"] color "#FF0000"
-        text "TYPE=[type(obs['y'])]" xpos 0.5 ypos 0.25 color "#FF0000"
-        text "VAL=[obs['y']]" xpos 0.5 ypos 0.30 color "#FF0000"
-
+        #text "TYPE=[type(obs['y'])]" xpos 0.5 ypos 0.25 color "#FF0000"
+        #ext "VAL=[obs['y']]" xpos 0.5 ypos 0.30 color "#FF0000"
         if obs["kind"] == "stalagmite":
             #nchor the bottom (1.0) to the ground line (chase_ground_y)
             add "obs_stalagmite" xpos int(obs["x"]) yanchor 1.0 ypos chase_ground_y 
@@ -1004,16 +1020,20 @@ screen chase_game():
     
 
     # ===== MONSTER (AI) =====
-    if monster_duck:
-        add "monster_duck" xpos monster_x yanchor 1.0 ypos monster_y
+    if not victor_on_ground:
+        add "runner_monster" xpos monster_x yanchor 1.0 ypos int(monster_y)
+    elif victor_duck:
+        add "monster_duck" xpos monster_x yanchor 1.0 ypos int(monster_y)
     else:
-        add "runner_monster" xpos monster_x yanchor 1.0 ypos monster_y
+        add "runner_monster" xpos monster_x yanchor 1.0 ypos int(monster_y)
 
-    # ===== VICTOR (PLAYER) =====
-    if victor_duck and victor_on_ground:
-        add "victor_duck" xpos victor_x yanchor 1.0 ypos victor_y
+    # ----- Victor -----
+    if not victor_on_ground:
+        add "runner_victor" xpos victor_x yanchor 1.0 ypos int(victor_y)
+    elif victor_duck:
+        add "victor_duck" xpos victor_x yanchor 1.0 ypos int(victor_y)
     else:
-        add "runner_victor" xpos victor_x yanchor 1.0 ypos victor_y
+        add "runner_victor" xpos victor_x yanchor 1.0 ypos int(victor_y)
 
     # ===== HUD ELEMENTS & MESSAGES (Rest of the screen is fine) =====
     # ... (Your HUD and Message frames go here) ...
