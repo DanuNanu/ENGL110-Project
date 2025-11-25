@@ -28,7 +28,12 @@ image bg lab_night    = "images/backgrounds/bg_lab_night.png"
 image bg window       = "images/backgrounds/bg_casement.png"
 image bg bedroom      = "images/backgrounds/bg_bedroom.png"
 image bg beach_night  = "images/backgrounds/bg_coastline.png"
-image bg lab_empty =    "images/backgrounds/bg_lab_empty.png"
+image bg lab_empty     = "images/backgrounds/bg_lab_empty.png"
+image bg beach_escape = "images/backgrounds/bg_coastline_escape.png"
+image bg rolling_hills = "images/backgrounds/bg_rolling_hills.png"
+image bg swiss_cottages = "images/backgrounds/bg_sprawling_cottages.png"
+image bg swiss_lakes = "images/backgrounds/bg_swiss_lake.png"
+image bg stony_beach = "images/backgrounds/bg_stony_beach.png"
 
 # ------------------------------------------------------------
 # IMAGES: VICTOR SPRITES (OPEN/CLOSED MOUTHS)
@@ -73,7 +78,6 @@ image creature despair_closed  = "images/characters/monster/monster_despair_clos
 image creature shadowed_open   = "images/characters/monster/monster_shadowed_open.png"
 image creature shadowed_closed = "images/characters/monster/monster_shadowed_closed.png"
 
-
 # ------------------------------------------------------------
 # IMAGES: UI (HEARTS)
 # ------------------------------------------------------------
@@ -92,7 +96,7 @@ image heart_empty = "hearts/empty_heart.png"
 # (Adjust filenames to match your actual files in /audio)
 # ------------------------------------------------------------
 
-define audio.wind         = "audio/windy_heavy.wav"
+define audio.wind         = "audio/wind_heavy.wav"
 define audio.rain         = "audio/rain_heavy_outside.wav"
 define audio.rain_inside  = "audio/rain_heavy_outside.wav"
 define audio.thunder      = "audio/thunder.wav"
@@ -102,6 +106,7 @@ define audio.footsteps    = "audio/steps_heavy.mp3"
 define audio.flesh_tear   = "audio/flesh_tear.mp3"
 define audio.correct_sfx  = "audio/correct.mp3"
 define audio.wrong_sfx    = "audio/wrong.mp3"
+define audio.light_wind = "audio/wind_light.wav"
 
 # NOTE: if you only want part of an sfx, you can:
 # - trim it in an external audio editor, OR
@@ -113,12 +118,19 @@ define audio.wrong_sfx    = "audio/wrong.mp3"
 # ------------------------------------------------------------
 
 transform left_side:
-    xalign 0.2
+    xalign 0.15
     yalign 1.0
+    zoom 0.82          # scale to 90% size (adjust as you like)
+    yoffset 100         # move downward (positive = down, negative = up)
+    xoffset -150
 
 transform right_side:
-    xalign 0.8
+    xalign 0.85
     yalign 1.0
+    zoom 0.70      # ← reduce size (adjust if needed)
+    yoffset 30
+    xzoom -1.0  
+    xoffset 150
 
 # Example: to custom position or resize a sprite, you can do:
 # show victor neutral_open at left_side:
@@ -149,7 +161,35 @@ screen heart_hud():
             for i in range(max_hearts - hearts):
                 add "heart_empty":
                     zoom 0.15
+#-------audio control-------$
+screen stop_waves_sfx():
+    timer 1.8 action Stop("sound")
 
+screen stop_heavy_wind_sfx():
+    timer 1.8 action Stop("sound")
+
+screen stop_light_wind_sfx():
+    timer 1.9 action Stop("sound")
+
+screen delay_sfx(delay_time1, delay_time2, sound_file):
+    tag delay_sfx
+    modal False
+    timer delay_time1 action Play("sound",sound_file)
+    timer delay_time2 action [Stop("sound"), Hide("delay_sfx")]
+
+screen delay_music(delay_time1, delay_time2, sound_file):
+    tag delay_music
+    modal False
+    timer delay_time1 action Play("music",sound_file, fadein = 1.0)
+    timer delay_time2 action [Stop("music", fadeout = 1.8), Hide("delay_music")]
+
+
+screen delay_music_no_fadein(delay_time1, delay_time2, sound_file):
+    tag delay_music_fadein
+    modal False
+    timer delay_time1 action Play("music",sound_file, 1.0)
+    timer delay_time2 action [Stop("music", fadeout = 1.0), Hide("delay_music_fadein")]
+#-------------------------
 
 # ------------------------------------------------------------
 # TRIVIA HELPER LABEL
@@ -173,16 +213,117 @@ label start:
 
     # Optional ambient sound
     play music audio.wind fadein 1.0
+    $ renpy.pause(2.0)
+    stop music fadeout 1.0
+
+    stop sound
 
     # Scene 1: Orkney establishing
     scene bg orkney_coast with fade
+    #=======narattor expisiton=======================
+    n "After being threatened by the Monster, Victor Frankenstein has sworn to fashion his creation a mate"
+    n "To complete his work, he has come to the Orkney Islands, desolate and remote,far from Geneva, where the waves batter the coast and the wind never rests."
+    n "Here upon this lonely shore, Victor means to resume the dreadful work he once began"
+    #=========== victor speaking ====================
+    show victor neutral_open at left_side
+    v "I have finally traversed the northern highlands and fixed myself on one of the remortest parts of these Islands"
+    show victor neutral_closed at left_side
 
-    n "Victor Frankenstein has fled south and east, then north, until the world itself seems to narrow into rock and sea."
-    n "The Orkney Islands are desolate, battered by waves and wind, far from Geneva, far from Switzerland, and even further from the innocence he once imagined he possessed."
+    show victor neutral_open at left_side
+    v "This place is well fitted my work being hardly more than a rock, whose sides are continually beaten upon by ....."
+    show victor neutral_closed at left_side
 
-    n "Here, on one of the remotest of these islands, he has chosen a barren rock as the scene of his labours."
-    n "The soil barely feeds a few miserable cows, and the island’s handful of inhabitants live in poverty, numb to suffering."
-    n "To them he is a strange lodger with a small hired hut; to himself, he is a man attempting to correct—or compound—a monstrous error."
+    show victor neutral_open at left_side
+    play sound audio.waves
+    v ".....Waves"
+    show screen stop_waves_sfx
+    show victor neutral_closed at left_side 
+
+    show victor anxious_open at left_side
+    v "My abode was a miserable hut with only two rooms. The thatch had fallen in, the walls were unplastered, the door off its hinges."
+    show victor tired at left_side
+
+    show victor neutral_open at left_side
+    v "I repaired what I could, bought a few pieces of wretched furniture, and took possesion of it."
+    show victor neutral_closed at left_side
+
+    show victor neutral_open at left_side
+    v "The inhabitants here scarcely notice me. Their limbs are gaunt and scraggly from suffering"
+    show victor neutral_closed at left_side
+
+    show victor anxious_open at left_side
+    v "Their misery has made them blunt to even the coarsest of sensations"
+    show victor tired at left_side
+
+    #---victor dailu routine-----#
+    show victor neutral_open at left_side
+    v "Initially, when I first arrived on this rock, I devoted my mornings to labour; but in the evenings, when the weather permitted, I--"
+
+    scene bg stony_beach with fade
+    show victor neutral_open at left_side
+    show screen delay_music_no_fadein(0.3, 1.8, audio.waves)
+    v "--walked on the stony beach of the sea to listen to the waves as they roared, and dashed at my feet"
+    show victor tired at left_side
+
+    show victor anxious_open at left_side
+    v "Yet, even while I watched the monotonous ever-changing scene around me, my thoughts returned home back to Switzerland:"
+    show victor tired at left_side
+    #-----switzerland contrast: quick slide show monatage ----
+    #Hills covered with vines scene
+    scene bg rolling_hills with dissolve
+    show victor anxious_open at left_side
+    v "Hills covered with vines, rich and green, instead of naked rock"
+    show victor tired at left_side
+    # cottages scene
+    scene bg swiss_cottages with dissolve
+    show victor anxious_open at left_side
+    v "Cottages scattered thickly over the plains, instead of this melancholic solitude."
+    show victor tired at left_side
+    #lakes and gentle sky
+    scene bg swiss_lakes with dissolve
+    play sound audio.light_wind 
+    show victor anxious_open at left_side
+    v "Fair lakes beneath a gentle sky, whose tumultous winds play like a lively infant--"
+    show screen stop_light_wind_sfx
+    $ renpy.pause(1.8)
+    $renpy.pause(0.4)
+    scene bg stony_beach with dissolve
+    show screen delay_music(0.3,2.0, audio.wind)
+    show victor angry_open at left_side
+    v "---compared to roarings of the giant ocean of this appaling landscape"
+    show victor angry_closed at left_side
+    $renpy.pause(0.4)
+    scene bg orkney_coast with fade
+    show victor anxious_open at  left_side
+    v "But as I proceeded, my work became each day more horrible and irksome to me"
+    show victor anxious_closed at left_side
+    $renpy.pause(0.4)
+    show victor anxious_open at left_side
+    v "Sometimes I could not prevail myself to enter my lab for several days"
+    show victor tired at left_side
+    $renpy.pause(0.4)
+    scene bg lab_night with fade
+    show victor anxious_open at left_side
+    v "At other times I toiled day and night, eager to complete the task"
+    show victor tired at left_side
+    $renpy.pause(0.4)
+    scene bg orkney_coast with dissolve
+    show victor anxious_open at left_side
+    v "During my first experiment, an enthusiatic frenzy had blinded me to the horror of my employment"
+    show victor tired at left_side
+    $renpy.pause(0.4)
+    show victor anxious_open at left_side
+    v "But now, my heart often sickened at the work of my hands."
+    show victor tired at left_side
+    $renpy.pause(0.4)
+    show victor anxious_open at left_side
+    v "Yet, in the midst of all this, my labour is considerably advanced"
+    show victor tired at left_side
+    $renpy.pause(0.4)
+    show victor anxious_open at left_side
+    v "I look towards its completion with a tremulous and eager hope I scarcely dare examine"
+    show victor tired at left_side
+
 
     # Move into lab scene (evening)
     jump orkney_lab_evening
@@ -306,7 +447,7 @@ label orkney_creature_at_window:
     n "Trembling with passion, he tears to pieces the thing on which he was engaged."
 
     # Cut back to lab with empty gurney background
-    scene bg bg_lab_empty with fade
+    scene bg lab_empty with fade
     # (This is your edited lab background with the body removed.)
     show creature despair_open at right_side
     m "—!"
