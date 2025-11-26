@@ -2,7 +2,7 @@
 # CONFIG & VARIABLES
 # ------------------------------------------------------------
 
-# Optional: make text type out instead of instant (tweak or remove if you don't like it)
+
 define config.default_text_cps = 30  # characters per second
 
 # Characters
@@ -87,11 +87,6 @@ image creature shadowed_closed = "images/characters/monster/monster_shadowed_clo
 
 image heart_full  = "hearts/full_heart.png"
 image heart_empty = "hearts/empty_heart.png"
-
-# NOTE: If hearts are too big, you can scale them like this:
-# image heart_full_small  = im.Scale("images/ui/heart_full.png", 48, 48)
-# image heart_empty_small = im.Scale("images/ui/heart_empty.png", 48, 48)
-# Then use heart_full_small / heart_empty_small in the HUD instead.
 
 #---------------------------dramatic effects for scene 3---------
 #---------------------------------------------------------------
@@ -231,11 +226,7 @@ transform right_side:
     xzoom -1.0  
     xoffset 150
 
-# Example: to custom position or resize a sprite, you can do:
-# show victor neutral_open at left_side:
-#     zoom 0.9
-# or:
-# show creature shadowed_open at Position(xalign=0.8, yalign=1.0)
+
 
 
 # ------------------------------------------------------------
@@ -863,7 +854,28 @@ label orkney_after_confrontation:
     # At this point, Orkney section is complete; you can later jump to montage/minigame/etc.
     n "For now, the barren rock of Orkney still holds him between guilt and defiance, between the memory of one monster—and the promise of another."
 
-    #need better transition to minigame fro now dummy transition is fine
+    jump pursuit_montage
+
+
+label pursuit_montage:
+    window show
+    scene black with fade
+    play ambient audio.wind
+
+    n "What followed passed in a blur of horror and misey."
+    n "After leaving the Orkney islands, it started with the fiend taking the life of Henry Clerval"
+
+    n "Seeing Henry's dead body, consumed Victor and months slipped away in delirium before he could return to Geneva"
+    n "After returning, Elizabeth tried to comfort him, yet the dreadful weight of his actions still hung on Victor's spirit"
+
+    n "But on the night of Victor's wedding, the creature fulfilled his vow and Elizabeth was struck down"
+    n "Victor's father also passed away as a result of grief"
+
+    n "Left along, Victor swore revenge, and pursued the fiend across lands, seas, and mountains."
+    n "Northward, towards the Arctic, the creature fled adn Victor followed soot"
+
+    n "Soon they both reached the Arctic"
+    n "Thus began the final pursuit across the frozen wilderness"
     if hearts > 0:
         jump arctic_chase_entry
     else:
@@ -895,7 +907,7 @@ label trivia_1:
             jump trivia_1
 
 label trivia_2:
-    n "What could be the horrible realisation that causes Victor to reconsider his promose?"
+    n "What could be the horrible realisation that causes Victor to reconsider his promise?"
     menu:
         "a) He does not have the finances or resources to make the monster a bride":
             call lose_heart from _call_lose_heart_2
@@ -1036,18 +1048,8 @@ default chase_spawn_max        = 1.6
 default chase_bool_change_check = False
 default chase_monster_gap = 400
 
-# Add this code block to your image definitions section
-#image arctic_chase_bg_day:
-    # Use the images you defined
-    #"bg_chase_day" xpos chase_bg_x1 ypos 0
-    #"bg_chase_day" xpos chase_bg_x2 ypos 0
-
-#image arctic_chase_bg_night:
-    #"bg_chase_night" xpos chase_bg_x1 ypos 0
-    #"bg_chase_night" xpos chase_bg_x2 ypos 0
-
 # Safe “no obstacles” start time
-define chase_safe_start_time = 0.5   # first 5s with no obstacles
+define chase_safe_start_time = 0.5   
 
 
 # ------------------------------------------------------------
@@ -1282,8 +1284,8 @@ init python:
         # ----- Obstacle spawning (after safe start period) -----
         store.chase_time_since_spawn += dt
         if store.chase_elapsed > chase_safe_start_time:
-            min_gap= max(0.46, 0.92/ store.chase_speed_scale)
-            max_gap = max(0.68, 1.32 / store.chase_speed_scale)
+            min_gap= max(0.75, 1.25/ store.chase_speed_scale)
+            max_gap = max(1.05, 1.75 / store.chase_speed_scale)
             gap = random.uniform(min_gap, max_gap)
             if store.chase_time_since_spawn >= gap:
                 _spawn_obstacle()
@@ -1499,7 +1501,7 @@ screen chase_game():
             yalign 0.2
             background "#0008"
             padding (20,20,20,20)
-            text "You stumble on the ice. Press SPACE to continue." size 32
+            text "You stumbled while chasing the creature. Press SPACE to continue." size 32
 
     elif chase_state == "dead":
         frame:
@@ -1549,7 +1551,7 @@ label arctic_chase_exhaustion:
     n "The endless pursuit, the cold, and his own relentless guilt drain the last of his will."
     n "He collapses, the form of his enemy vanishing into the white distance."
 
-    call screen game_over_screen
+    call screen game_arctic_over_screen
     return
 
 
@@ -1563,10 +1565,19 @@ label arctic_chase_montage:
     n "Victor staggers onward, refusing to yield. The fiend remains always a little ahead, a shadow taunting him across the endless ice."
     n "Days blur into nights; the chase becomes his whole world."
 
-    # TODO: Replace this with your actual montage / final scenes.
-    # For now, just go to your generic game-over / ending screen:
-    call screen game_over_screen
+    n "At last, Victor's hopes are extinguished and he is found drifting on a piece of Ice"
+    n "It looked like there was no hope for him until he was found by a vessel"
+
+    n "Although, Victor was rescued the chase had taken a toll on his body"
+    n "Eventually Victor passed due to exhaustion"
+
+    n "The creature found its way on the vessel carrying Victor's body"
+    n "Upon confirming Victor's passing, the creature's work was done"
+
+    n "The creature decided to end its own life and burnt its own body so that Victor's actions could never be recreated"
+    call screen game_win_over_screen
     return
+
 
 
 
@@ -1581,22 +1592,19 @@ label game_over_panic:
     stop music
     stop ambient
 
-    scene bg lab_night with fade
-    show victor panic_open at left_side
-
-    v "Why can I not remember? Why does my mind recoil from what I myself have done?"
-
-    show victor panic_closed at left_side
-    n "The strain of his reflections shatters what remains of his strength."
-
     scene black with fade
-    n "On that barren rock, consumed by guilt and terror, Victor’s body finally yields where his conscience could not."
+
+    show victor panic_open at left_side
+    v "My resolve-it's slipping... I cannot hold myself against that fiend"
+    show victor panic_closed at left_side
+    hide victor panic_closed
+    n "Doubt and terror surge through Victor, draining the last of his strength"
+    n "His will shatters, and darkness takes him, leaving the creature to reign unchecked."
 
     # Simple game over screen
     call screen game_over_screen
 
     return
-
 
 
 screen game_over_screen():
@@ -1610,4 +1618,29 @@ screen game_over_screen():
             text "You have exhausted his strength." xalign 0.5
 
             textbutton "Return to Main Menu" action MainMenu() xalign 0.5
-            textbutton "Restart Orkney Scene" action Start() xalign 0.5
+
+
+screen game_arctic_over_screen():
+    modal True
+    frame:
+        align (0.5, 0.5)
+        vbox:
+            spacing 20
+            text "GAME OVER" size 60 xalign 0.5
+
+            textbutton "Return to Main Menu" action MainMenu() xalign 0.5
+
+
+
+screen game_win_over_screen():
+    modal True
+    frame:
+        align (0.5, 0.5)
+        vbox:
+            spacing 20
+            text "FIN" size 60 xalign 0.5
+            text "Thank you for playing" xalign 0.5
+            text "Hope you enjoyed my game" xalign 0.5
+
+            textbutton "Return to Main Menu" action MainMenu() xalign 0.5
+            

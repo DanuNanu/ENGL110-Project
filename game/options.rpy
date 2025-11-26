@@ -12,7 +12,7 @@
 ##
 ## The _() surrounding the string marks it as eligible for translation.
 
-define config.name = _("ENGL110 Creative Adaptation Proj")
+define config.name = _("Frankenstein: The Game")
 
 
 ## Determines if the title given above is shown on the main menu screen. Set
@@ -25,13 +25,36 @@ define config.fast_skipping = False
 
 ## The version of the game.
 
-define config.version = "1.0"
+define config.version = "01000110 01110010 01100001 01101110 01101011 01100101 01101110 01110011 01110100 01100101 01101001 01101110 "
 
 
 ## Text that is placed on the game's about screen. Place the text between the
 ## triple-quotes, and leave a blank line between paragraphs.
 
 define gui.about = _p("""
+    Made by Aditya Jaykumar
+
+    Special thanks to Aditya for helping with the graphics
+
+    Special thanks to Aditya for the programming logic
+
+    Special thanks to Aditya for the story structure
+
+    Special thanks to Aditya for creating the dialogue
+
+    Special thanks to Aditya for figuring out how to implement parabolic trajectories in a 2D enviorment
+
+    Special thanks to Aditya for finding the creepy main menu music
+
+    Special thanks to Aditya for making the sprites
+
+    Special thanks to Aditya for writing 1611 lines of code
+
+    Special thanks to Aditya for coming up with this weirdly narcissitic about page 
+
+    Special thanks to Aditya for mispelling narcissistic (hopefully that wasn't wrong as well)
+
+    Whoever is reading this, I hope you enjoyed my game. It was a lot of effort to make this game but it was well worth it
 """)
 
 
@@ -39,7 +62,7 @@ define gui.about = _p("""
 ## distribution. This must be ASCII-only, and must not contain spaces, colons,
 ## or semicolons.
 
-define build.name = "ENGL110CreativeAdaptationProj"
+define build.name = "Frankenstein: The Game"
 
 
 ## Sounds and music ############################################################
