@@ -180,6 +180,9 @@ transform correct_outside:
 transform correct_creat:
     yoffset -500
     xoffset -500
+transform bedroom_window_zoom:
+    linear 1.3 zoom 1.38 xalign 0.62 yalign 0.34
+
     
 
 
@@ -336,7 +339,7 @@ label start:
     show victor neutral_closed at left_side
 
     show victor neutral_open at left_side
-    v "This place is well fitted my work being hardly more than a rock, whose sides are continually beaten upon by ....."
+    v "This place is well fitted for my work, being hardly more than a rock whose sides are continually beaten upon by ....."
     show victor neutral_closed at left_side
 
     show victor neutral_open at left_side
@@ -577,7 +580,7 @@ label orkney_creature_at_window:
     show victor anxious_closed  at left_side
     n "Victor trembles, and his heart failswithin him"
 
-    show victor_anxious_closed at left_side:
+    show victor anxious_closed at left_side:
         linear 0.05 yoffset -5
         linear 0.05 yoffset 5
         repeat 6
@@ -691,6 +694,7 @@ label orkney_creature_at_window:
     n "-- before running away"
     $ renpy.pause(2.1)
 
+    stop ambient fadeout 1.0
     jump orkney_bedroom_dread
 
 # ------------------------------------------------------------
@@ -698,72 +702,127 @@ label orkney_creature_at_window:
 # ------------------------------------------------------------
 
 label orkney_bedroom_dread:
-
-    play ambient audio.rain_inside
+    stop sound
+    stop ambient fadeout 1.0
+    play ambient audio.rain_inside fadein 1.0
 
     scene bg bedroom with fade
     show victor tired at left_side
 
-    n "Victor locks the laboratory door and vows never to resume his labours. Alone in his small room, he finds no comfort."
+    show screen do_sfx(0.8, audio.door_lock)
+    n "Victor locks the laboratory door and vows never to resume his labours"
+    $renpy.pause(0.8)
 
-    n "Hours pass as he sits near the window, gazing at the almost motionless sea under the quiet moon."
 
-    play sound audio.waves
-    n "The silence is so profound that the paddling of oars near the shore startles him."
+    scene black with fade
+    show screen do_sfx(1.1, audio.door_slam)
+    n "With trembling steps, Victor goes to his apartment"
+    $renpy.pause(1.1)
+    
+    scene bg_bedroom with fade
+    show victor tired at left_side
+    n "Hours pass as Victor sits near the window, gazing at the almost motionless sea under the quiet moon."
 
-    play sound audio.footsteps
-    n "Footsteps, a door creaking softly… he trembles from head to foot, knowing—before he admits it—who approaches."
+    #window_zoom
+    show bg_bedroom at bedroom_window_zoom behind victor_tired
+    $ renpy.pause(1.3, hard= True)
 
-    play sound audio.door_creak
+    #Transisiton to coastline
+    scene bg beach_night with dissolve
+    play sound audio.waves fadein 1.0
+    n "The silence was so profound that the paddling of oars near the shore startles Victor."
 
-    show creature shadowed_open at right_side
+    scene black with fade
+    n "After a few minutes, Victor heard hos door creak which startled him from head to foot"
+
+    scene bg_bedroom with dissolve 
+    show screen do_sfx(1.3, audio.door_creak)
+    show victor anxious_closed at left_side:
+        linear 0.05 yoffset -5
+        linear 0.05 yoffset 5
+        repeat 6
+    v "!!!"
+    n "Victor was so overcome with the feeling of helplessness that he couldn't even get the attention --"
+    n "-- of the nearby peasant for assitance"
+    $ renpy.pause(1.3, hard=True)
+
+    show victor anxious_closed at left_side
+    show screen do_sfx(3.1, audio.super_heavy_steps)
+    n "Victor could now hear the sounds of footsteps originating near his door"
+    $ renpy.pause(3.1, hard=True)
+
+    #creature enters
+    show screen do_sfx(1.3, audio.door_creak)
+    show creature neutral_closed at right_side
+    n "The door opened, and the dreaded creature appeared."
+    show creature despair_open at right_side
     m "You have destroyed the work which you began. Do you dare break your promise?"
+    m "I have endured toil and misery, I have travelled all over for you"
+    m "I have endured incalculable fatigue, and cold amd hunger. Do you dare destroy my hopes?"
+    show creature despair_closed at right_side
 
-    show creature shadowed_closed at right_side
     show victor anxious_open at left_side
-    v "Begone! I do break my promise. Never will I create another like yourself, equal in deformity and wickedness."
-
+    v "Begone! I go break my promise. Never will I create another like you, equal in deformity and wickedness"
     show victor anxious_closed at left_side
 
     show creature angry_open at right_side
-    m "Slave, I before reasoned with you; you have proved yourself unworthy of my condescension."
-    m "Remember that I have power. You are my creator, but I am your master. Obey!"
-
+    m "Slave! I reasoned with you, but you have proved unworthy of my condescension"
+    m "Remember that I have the power. You are my creator, but I am your master. Obey!"
     show creature angry_closed at right_side
 
-    show victor furious_open at left_side
-    v "The hour of my weakness is past, and the period of your power is arrived."
-    v "Your threats cannot move me to an act of wickedness. Begone!"
+    show victor angry_open at left_side
+    v "The hour of my weakness is in the past, and the period of your power has arrived"
+    v "Your threats cannot move me. Begone!"
+    show victor angry_closed at left_side
 
-    show victor furious_closed at left_side
-
-    # --- TRIVIA 5: about the nature of their power dynamic / threat ---
     call trivia_5 from _call_trivia_5
+
+    show creature angry_closed at right
+    n "The creature was able to see Victor's determination."
+    n "This greatly angered the creature who gnashed his teeth in the impotence of anger"
+
 
     show creature despair_open at right_side
     m "Shall each man find a wife for his bosom, and each beast its mate—and I be alone?"
-    m "Beware. Revenge remains—dearer than light or food."
+    m "I had feelings of affection but they were requited with detestation and scorn"
+    show creature despair_close at right_side
 
-    show creature despair_closed at right_side
+    show creature angry_open at right_side
+    m "Are you happy, while I grovel as a result of my wretchedness?"
+    m "You may take my other passions, but I will have my revenge"
+    show creature angry_closed at right_side
 
-    show creature shadowed_open at right_side
-    m "It is well. I go; but remember—I shall be with you on your wedding-night."
+    show creature angry_open at right_side
+    m "Henceforth, revenge will be my sole purpose. To me revenge remains dearer than light or food"
+    m "Beware; for I am fearless, and therefore powerful. You shall repent of injuries you inflict"
+    show creature angry_closed at right_side
 
-    show creature shadowed_closed at right_side
+    show victor angry_open at left_side
+    v "Devil cease; I am no longer bend to your words. Leave me for I am inexorable."
+    show victor angry_closed at left_side
 
-    show victor furious_open at left_side
-    v "Villain! Before you sign my death-warrant, be sure you are yourself safe!"
+    show creature shadowed_open at right
+    m "Very well then. I'll go--"
+    m "--but remember, I shall be with you on your wedding night"
+    show creature shadowed_closed at right
 
-    show victor furious_closed at left_side
-    n "Victor lunges, but the creature eludes him and flees."
+    show victor angry_open at left
+    n "Hearing the creature's words, startled Victor"
+    v "Villian! before you sign my death-warrant, be sure that you are yourself safe"
+    show victor angry_closed at left
 
-    play sound audio.footsteps
-    play sound audio.door_creak
+    scene black with fade
+    n "Once the gravity of the creature's words hit Victor, he could not hold back his rage anymore"
+    n "He tried to lunge at the Creature. However, the creature was able to elude Victor's grasp"
+    show screen do_sfx(0.8, audio.run)
+    n "The monster promptly escaped, headed towards the beach"
+    $ renpy.pause(0.8)
 
-    scene bg beach_night with fade
+    scene bg beach_escape with dissolve
     play sound audio.waves
-    n "In moments, Victor sees a small boat shoot across the waters with arrowy swiftness, vanishing amidst the waves."
+    n "In moments, Victor saw the monster shoot across the waters with an arrowy swiftness, and the monster was soon lost amidst the waves"
 
+    
     jump orkney_after_confrontation
 
 
