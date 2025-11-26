@@ -19,6 +19,8 @@ define config.name = _("ENGL110 Creative Adaptation Proj")
 ## this to False to hide the title.
 
 define gui.show_name = True
+define config.allow_skipping = False
+define config.fast_skipping = False
 
 
 ## The version of the game.
@@ -62,7 +64,7 @@ define config.has_voice = True
 ## the player is at the main menu. This file will continue playing into the
 ## game, until it is stopped or another file is played.
 
-# define config.main_menu_music = "main-menu-theme.ogg"
+define config.main_menu_music = "audio/main_menu_music.mp3"
 
 
 ## Transitions #################################################################
@@ -120,7 +122,7 @@ define config.window_hide_transition = Dissolve(.2)
 ## Controls the default text speed. The default, 0, is infinite, while any other
 ## number is the number of characters per second to type out.
 
-default preferences.text_cps = 30
+default preferences.text_cps = 35
 
 
 ## The default auto-forward delay. Larger numbers lead to longer waits, with 0

@@ -17,7 +17,6 @@ default hearts = 3
 define max_hearts = 3
 
 
-
 # ------------------------------------------------------------
 # IMAGES: BACKGROUNDS
 # ------------------------------------------------------------
@@ -33,6 +32,9 @@ image bg rolling_hills = "images/backgrounds/bg_rolling_hills.png"
 image bg swiss_cottages = "images/backgrounds/bg_sprawling_cottages.png"
 image bg swiss_lakes = "images/backgrounds/bg_swiss_lake.png"
 image bg stony_beach = "images/backgrounds/bg_stony_beach.png"
+image bg casement_frame = "images/backgrounds/casement_frame.png"
+image bg casement_outside = "images/backgrounds/casement_outside.png"
+
 image white = Solid("#FFFFFF")
 
 
@@ -91,6 +93,95 @@ image heart_empty = "hearts/empty_heart.png"
 # image heart_empty_small = im.Scale("images/ui/heart_empty.png", 48, 48)
 # Then use heart_full_small / heart_empty_small in the HUD instead.
 
+#---------------------------dramatic effects for scene 3---------
+#---------------------------------------------------------------
+# Lighning flash layer
+image lightning_flash = Solid("#FFFFFF")
+
+#moonlight atmospheric glow
+image moon_glow:
+    Solid("#AACCFF33")
+    size (config.screen_width, config.screen_height)
+
+
+#positioning creature so outside window
+transform casement_creature_pos:
+    xalign 0.60
+    yalign 0.60
+    zoom 0.50
+    xzoom -1.0  
+
+transform casement_creature_al:
+    xzoom -1.0  
+    xalign 0.5
+    yalign 0.6
+
+#subtle movement for breathing
+transform eerie_idle:
+    zoom 0.70
+    linear 1.4 yoffset -3
+    linear 1.4 yoffset 3
+    repeat 
+
+transform stat_idle:
+    zoom 0.70
+
+transform outside_frame:
+    yoffset 120
+    xoffset 642
+
+transform filter_shadow:
+    matrixcolor BrightnessMatrix(-0.45) * ContrastMatrix(0.55)
+    alpha 0.85
+
+transform filter_sha:
+    matrixcolor BrightnessMatrix(-0.45) * ContrastMatrix(0.55)
+    alpha 1.0
+
+transform dimmer_filter:
+    matrixcolor BrightnessMatrix(-0.20) * ContrastMatrix(0.80)
+
+transform outside_dimmer:
+    matrixcolor BrightnessMatrix(-0.10)
+
+transform moonlight_shadow:
+    matrixcolor TintMatrix("#88AACC") * BrightnessMatrix(-0.45)* ContrastMatrix(0.55)
+    alpha 0.85
+
+transform strong_filter:
+    matrixcolor BrightnessMatrix(-0.65) * ContrastMatrix(0.35)
+    alpha 0.85
+
+transform flash_reveal:
+    matrixcolor BrightnessMatrix(0.25)* ContrastMatrix(1.35)
+    alpha 1.0
+transform monster_pov_zoom:
+    xalign 0.5
+    yalign 0.15
+    zoom 1.75
+    easein 0.4 zoom 1.95
+    xzoom -1.0  
+transform scene_zoom:
+    xalign 0.5
+    yalign 0.4
+    zoom 1.25
+    ease 0.4 zoom 1.45
+transform pov_zoom:
+    anchor (0.5, 0.5)
+    xpos 0.5
+    ypos 0.45
+    zoom 1.0
+    ease 0.35 zoom 1.35
+
+transform correct_outside:
+    yoffset -285
+    xoffset -500
+
+transform correct_creat:
+    yoffset -500
+    xoffset -500
+    
+
 
 # ------------------------------------------------------------
 # AUDIO DEFINITIONS
@@ -108,7 +199,11 @@ define audio.flesh_tear   = "audio/flesh_tear.mp3"
 define audio.correct_sfx  = "audio/correct.mp3"
 define audio.wrong_sfx    = "audio/wrong.mp3"
 define audio.light_wind = "audio/wind_light.wav"
-
+define audio.door_lock = "audio/door_lock.mp3"
+define audio.door_slam= "audio/door_slam.mp3"
+define audio.monster_howl = "audio/monster_howl.mp3"
+define audio.super_heavy_steps = "audio/super_heavy_footsteps.mp3"
+define audio.run = "audio/run.mp3"
 # NOTE: if you only want part of an sfx, you can:
 # - trim it in an external audio editor, OR
 # - lower the volume and stop it quickly using `queue` / `stop sound`.
@@ -217,6 +312,7 @@ label lose_heart:
 # ------------------------------------------------------------
 
 label start:
+    stop music 
 
     # Show HUD for hearts always
     show screen heart_hud
@@ -463,6 +559,7 @@ label orkney_lab_evening:
     show screen do_sfx(0.8, audio.thunder)
     n "SUDDENLY!"
     #---- thunder next part then jump to windo-----$
+    $ renpy.music.set_volume(0.1, 0 ,"music")
     jump orkney_creature_at_window
 
 
@@ -472,60 +569,129 @@ label orkney_lab_evening:
 # ------------------------------------------------------------
 
 label orkney_creature_at_window:
-
     stop ambient fadeout 1.0
-    play ambient audio.wind
+    play ambient audio.light_wind loop
+    $ renpy.music.set_volume(0.35, channel = "ambient" )
 
-    # Victor in lab, looking up
-    scene bg lab_night with fade
-    show victor panic_closed at left_side
+    scene bg_lab_night with fade
+    show victor anxious_closed  at left_side
+    n "Victor trembles, and his heart failswithin him"
 
-    n "Victor trembles; his heart fails within him."
+    show victor_anxious_closed at left_side:
+        linear 0.05 yoffset -5
+        linear 0.05 yoffset 5
+        repeat 6
 
-    scene bg window with dissolve
+    show victor anxious_closed at left_side
+    v "On looking up-"
+
+    scene bg_casement with dissolve
+    show moon_glow behind bg_casement
+
+
+    n "By the light of the rising moon, he sees the daemon at the casement."
+
     play sound audio.thunder
-    n "He looks up. By the light of the rising moon, he sees the dæmon at the casement."
+    show lightning_flash 
+    $ renpy.pause(0.05) 
+    hide lightning_flash 
 
-    show creature grin at right_side
-    n "A ghastly grin wrinkles the creature’s lips as he gazes upon Victor, who sits fulfilling the task allotted him."
+    play sound audio.thunder
+    show lightning_flash 
+    $ renpy.pause(0.05)
+    hide lightning_flash 
 
-    show victor panic_open at left_side
-    v "He followed me... through forests, caves, and heaths, and now comes to claim his due."
 
-    show victor panic_closed at left_side
+    scene casement_outside at outside_frame, outside_dimmer
+    show creature shadowed_closed at casement_creature_pos, eerie_idle, strong_filter
+    show casement_frame at dimmer_filter
+    n "A shape stands beyond the arch, silent, watching, breathing."
+    pause 0.4
 
-    # Victor’s sensation of madness → destroys bride
-    show victor furious_open at left_side
-    v "Another like him... I cannot—"
+    show victor anxious_closed at left_side, filter_shadow
+    v "Wha.."
 
-    show victor furious_closed at left_side
-    n "His mind reels; with a sensation bordering on madness, Victor thinks of his promise."
+    play sound audio.thunder
+    show lightning_flash
+    show creature grin at casement_creature_pos, stat_idle, flash_reveal
+    show casement_frame at dimmer_filter
+    show victor anxious_closed at left_side, flash_reveal
+    $ renpy.pause(0.12) 
+    hide lightning_flash 
+    $ renpy.pause(0.12) 
 
-    play sound audio.flesh_tear
-    scene black with vpunch
-    n "Trembling with passion, he tears to pieces the thing on which he was engaged."
+    #n "The creature gazed on Victor with a ghastly grin and wrinkled lips"
+    hide creature grin 
+    show creature grin at casement_creature_pos, eerie_idle, filter_sha behind casement_frame
+    show casement_frame at dimmer_filter
+    show victor anxious_closed at left_side, filter_shadow
 
-    # Cut back to lab with empty gurney background
-    scene bg lab_empty with fade
-    # (This is your edited lab background with the body removed.)
-    show creature despair_open at right_side
-    m "—!"
 
-    play sound audio.flesh_tear
-    show creature despair_closed at right_side
-    n "The wretch sees Victor destroy the creature whose future existence meant his only hope of happiness."
+    show victor neutral_open at left_side, filter_shadow
+    v "He followed me in my travels.... through forest, caves, and desert heaths"
+    show victor neutral_closed at left_side, filter_shadow
+    $renpy.pause(0.4)
 
-    show creature angry_open at right_side
-    m "..."
+    show victor anxious_open at left_side, filter_shadow
+    v "Now, he has come here to mark my progress and claim the fulfilmet of my promise"
+    show victor tired at left_side, filter_shadow
+    $renpy.pause(0.4)
 
-    show creature angry_closed at right_side
-    n "With a howl of devilish despair and revenge, he withdraws."
+    hide victor tired 
+    scene casement_outside at outside_frame, outside_dimmer, pov_zoom, correct_outside
+    show creature grin at casement_creature_al, pov_zoom:
+        xoffset 5
+        yoffset 450
+        zoom 0.9
+    show casement_frame at dimmer_filter,pov_zoom
+    n "Victor meets the creature's eyes"
 
-    play sound audio.footsteps
+    scene casement_outside at outside_frame, outside_dimmer
+    show creature grin at casement_creature_pos, filter_sha, stat_idle behind casement_frame
+    show casement_frame at dimmer_filter
+    show victor angry_closed at left_side, filter_sha
+    n "As Victor looked at it, he could only see that the creatures countenance expressed the utmost extent of malice and treachery"
+    n "Now the thought of creating another like him, filled Victor with madness"
 
-    # Victor leaves, locks door, goes to bedroom
+    show victor angry_open at left_side, filter_sha with vpunch
+    n "Trembling with passion, Victor surged toward the unfinished bride--"
+
+    scene bg_lab_night with dissolve
+    show victor angry_open at left_side
+    $renpy.pause(1.9)
+
+    scene black 
+    play sound audio.flesh_tear 
+    $renpy.pause()
+
+    scene bg_lab_empty
+    show victor angry_closed at left_side
+    n "...and tore his work to pieces, breaking his promise forever."
+
+    scene casement_outside at outside_frame, outside_dimmer
+    show creature angry_open at casement_creature_pos, stat_idle, behind casement_frame, filter_sha
+    show casement_frame at dimmer_filter
+    n "The wretch saw everything unfold before his own eyes"
+
+    scene casement_outside at outside_frame, outside_dimmer, pov_zoom, correct_outside
+    show creature angry_open at casement_creature_al, pov_zoom, filter_sha:
+        xoffset 5
+        yoffset 450
+        zoom 0.9
+    show casement_frame at dimmer_filter,pov_zoom
+    n "The creature could naught but let out a howl of despair and vengeance--"
+    show screen do_sfx(2.7,audio.monster_howl)
+    $ renpy.music.set_volume(10, 0 ,"sound")
+    m "HOOOOOWWWWWWWWWLLLLLL!"
+    $ renpy.pause(2.7)
+
+    scene black with fade
+    scene bg_casement at dimmer_filter
+    show screen do_sfx(2.1, audio.run)
+    n "-- before running away"
+    $ renpy.pause(2.1)
+
     jump orkney_bedroom_dread
-
 
 # ------------------------------------------------------------
 # BEDROOM DREAD + DOOR CREEK + CONFRONTATION
