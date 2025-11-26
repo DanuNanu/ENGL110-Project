@@ -18,7 +18,6 @@ define max_hearts = 3
 
 
 
-
 # ------------------------------------------------------------
 # IMAGES: BACKGROUNDS
 # ------------------------------------------------------------
@@ -34,6 +33,8 @@ image bg rolling_hills = "images/backgrounds/bg_rolling_hills.png"
 image bg swiss_cottages = "images/backgrounds/bg_sprawling_cottages.png"
 image bg swiss_lakes = "images/backgrounds/bg_swiss_lake.png"
 image bg stony_beach = "images/backgrounds/bg_stony_beach.png"
+image white = Solid("#FFFFFF")
+
 
 # ------------------------------------------------------------
 # IMAGES: VICTOR SPRITES (OPEN/CLOSED MOUTHS)
@@ -176,6 +177,15 @@ screen delay_sfx(delay_time1, delay_time2, sound_file):
     modal False
     timer delay_time1 action Play("sound",sound_file)
     timer delay_time2 action [Stop("sound"), Hide("delay_sfx")]
+
+screen do_sfx(delay_time1, sound_file):
+    tag do_sfx
+    modal False
+    $ renpy.music.set_volume(5, 0 ,"sound")
+    timer 0.1 action Play("sound",sound_file)
+    $ renpy.music.set_volume(5, 0 ,"sound")
+    timer delay_time1 action [Stop("sound"), Hide("do_sfx")]
+
 
 screen delay_music(delay_time1, delay_time2, sound_file):
     tag delay_music
@@ -337,75 +347,124 @@ label orkney_lab_evening:
 
     stop music fadeout 1.0
     play ambient audio.rain_inside
+    scene black with fade
+    n "Some time later..."
+    n "Victor's labour continues into the evening as the sun starts to set"
 
     scene bg lab_night with fade
 
     show victor tired at left_side
-    n "Victor has spent his mornings labouring over the filthy process of constructing a second being, and his evenings pacing the beach, listening to the roar of the waves."
-    n "But tonight, he sits in his laboratory, tools idle, eyes unfocused."
+    v "The sun has set and he moon is rising from the sea."
+    v "I have not sufficient light for my employment"
+    $renpy.pause(0.4)
 
     show victor neutral_open at left_side
-    v "Three years ago... I was engaged in the same manner."
-
+    v "Should I abandon my labour for the night... or hasten its completion through unremetting attention?"
     show victor neutral_closed at left_side
-    n "He remembers the first experiment: the ecstatic frenzy, the feverish anticipation, and then the horror of the creature's awakening."
 
-    show victor concerned_open at left_side
-    v "I created a fiend whose barbarity has desolated my heart, and filled it with a remorse that has never left me."
-
-    show victor concerned_closed at left_side
-    n "Now he prepares to repeat the experiment—this time with a companion for the being he loathes and fears."
-
-    # --- TRIVIA 1: about his first creation / remorse ---
-    call trivia_1
-
-    show victor anxious_open at left_side
-    v "Another being... of whose dispositions I am entirely ignorant."
-
-    show victor anxious_closed at left_side
-    n "He imagines her ten thousand times more malignant than her mate, delighting in murder and wretchedness."
+    $renpy.pause(0.4)
 
     show victor neutral_open at left_side
-    v "He swore to quit the neighbourhood of man... but she has made no such promise."
-
+    v "Three years ago I was engaged in the same manner"
     show victor neutral_closed at left_side
-    n "Victor realises the compact he made was with one creature only; the second might refuse to vanish into deserts."
 
-    # --- TRIVIA 2: about the compact / promise ---
-    call trivia_2
+    $renpy.pause(0.4)
 
-    show victor concerned_open at left_side
-    v "They might even hate each other..."
-    v "He already loathes his own deformity—would he not recoil still more from it in another form?"
+    n "A question arises"
 
-    show victor concerned_closed at left_side
-    n "Victor imagines the female turning away from her mate in disgust, drawn instead to the ‘superior beauty’ of humankind."
+    call trivia_1 from _call_trivia_1
+
+    $renpy.pause(0.4)
 
     show victor anxious_open at left_side
-    v "Then he would be again alone… exasperated, deserted by one of his own species."
+    v "I created a fiend whose barbarity has desolated my heart, and filled it with the bitterest remorse."
+    show victor tired at left_side
 
-    show victor anxious_closed at left_side
-
-    # --- TRIVIA 3: about the risk of their offspring ---
-    call trivia_3
-
-    show victor panic_open at left_side
-    v "A race of devils... children, propagated upon the earth, making human existence precarious and full of terror."
-
-    show victor panic_closed at left_side
-    n "For the first time, the full wickedness of his promise bursts upon him."
+    $renpy.pause(0.4)
 
     show victor anxious_open at left_side
-    v "Had I a right, for my own benefit, to inflict this curse upon everlasting generations?"
+    v "And now I am about to form another being, of whose dispositions I was alike ignorant"
+    show victor tired at left_side
+
+    $renpy.pause(0.4)
 
     show victor anxious_closed at left_side
-    n "He shudders to imagine future ages cursing him as their pest, whose selfishness bought peace at the price of the human race."
+    v "!!!"
+    n "Victor makes a horrible realisation that causes him to reconsider his promise"
+    call trivia_2 from _call_trivia_2
 
-    # --- TRIVIA 4: about why his fear shifts from the creature’s threats to his own moral responsibility ---
-    call trivia_4
+    $renpy.pause(0.4)
 
-    # Move to the window/creature appearance
+    show victor anxious_open at left_side
+    v "They might even hate each other"
+    show victor anxious_closed at left_side
+    $renpy.pause(0.4)
+
+    show victor anxious_open at left_side
+    v "The creature already loathes his own deformity, so might he not recoil more when he sees this abhorence in the female form?"
+    $renpy.pause(0.4)
+
+    show victor anxious_open at left_side
+    v "She might turn from him in favour of the superior beauty of mankind"
+    show victor tired at left_side
+    $renpy.pause(0.4)
+
+    show victor angry_closed at left_side
+    v "...."
+    n "Victor makes another realization"
+
+    $renpy.pause(0.4)
+
+    show victor anxious_open at left_side
+    v "He would be alone again, exasperated by being deserted by one of his own species"
+    show victor anxious_closed at left_side
+
+    $renpy.pause(0.4)
+
+    show victor angry_open at left_side
+    v "Even if they were to leave Europe and inhabit the deserts of the new world---"
+    v "--one of the first results of those sympathies for which the daemon thisted would be..."
+    n "Incoming question:"
+    call trivia_3 from _call_trivia_3 #change trivia to ask what would be thirsted and why he fear it
+    $renpy.pause(0.4)
+    v "Such thirst would lead to the propogation of a race of devils, who might make the very existence of the species of man--"
+    v "--a condition precarious and full of terror"
+
+    show victor angry_open at left_side
+    v "Have I the right, for my own benefit, to inflict this curse upon everlasting generations?"
+    show victor angry_closed at left_side
+
+    $renpy.pause(0.4)
+
+    show victor anxious_open at left_side
+    v "I have been struck senseless by his fiendish threats--"
+    v "--but now, for the first time the wickedness of my promise bursts upon me"
+    show victor angry_closed at left_side
+    $renpy.pause(0.4)
+    show victor anxious_closed at left_side
+    n "Victor shudders to imagine future ages cursing him as their pest"
+    call trivia_4 from _call_trivia_4
+    scene black 
+    play music "audio/rain_heavy_outside.wav"
+    $ renpy.music.set_volume(0.4, 0 ,"music")
+
+    $renpy.pause(0.5)
+    show screen do_sfx(0.8, audio.thunder)
+    scene black
+    show white
+    $renpy.pause(0.1)
+    hide white 
+    $renpy.pause(0.3)
+    scene black
+    show white 
+    $renpy.pause(0.1)
+    hide white
+    $renpy.pause(0.8)
+    show screen do_sfx(0.8, audio.thunder)
+    n "SUDDENLY!"
+    #---- thunder next part then jump to windo-----$
     jump orkney_creature_at_window
+
 
 
 # ------------------------------------------------------------
@@ -513,7 +572,7 @@ label orkney_bedroom_dread:
     show victor furious_closed at left_side
 
     # --- TRIVIA 5: about the nature of their power dynamic / threat ---
-    call trivia_5
+    call trivia_5 from _call_trivia_5
 
     show creature despair_open at right_side
     m "Shall each man find a wife for his bosom, and each beast its mate—and I be alone?"
@@ -563,7 +622,7 @@ label orkney_after_confrontation:
     n "He paces his room, imagination conjuring a thousand images to torment him."
 
     # --- TRIVIA 6: about what Victor fears most (himself vs Elizabeth vs humanity) ---
-    call trivia_6
+    call trivia_6 from _call_trivia_6
 
     show victor panic_open at left_side
     v "When that hour comes, I shall die—and at once satisfy and extinguish his malice."
@@ -600,72 +659,74 @@ label trivia_1:
 
     menu:
         "a) Pride in his scientific genius":
-            call lose_heart
+            call lose_heart from _call_lose_heart
             jump trivia_1
         "b) Unparalleled barbarity that desolated his heart with remorse":
             play sound audio.correct_sfx
-            n "He cannot forget that his first work brought only grief and guilt."
+            n "Correct! He cannot forget that his first work brought only grief and guilt."
             return
         "c) A chance to impress the philosophers of Ingolstadt":
-            call lose_heart
+            call lose_heart from _call_lose_heart_1
             jump trivia_1
 
 label trivia_2:
-    n "Whose promise is Victor now questioning as he works on the bride?"
+    n "What could be the horrible realisation that causes Victor to reconsider his promose?"
     menu:
-        "a) His own vow never to repeat the experiment":
-            call lose_heart
+        "a) He does not have the finances or resources to make the monster a bride":
+            call lose_heart from _call_lose_heart_2
             jump trivia_2
-        "b) The creature’s promise to quit the neighbourhood of man, which the bride might refuse to share":
+        "b) The creature had promised to quit the neighbourhood of man, but the bride had not":
             play sound audio.correct_sfx
-            n "The compact was made with one being only; the second has no such obligation."
+            n "Thats right!, Victor is terrified of the unknown dispositons of the bride he is creating:"
+            n "The bride, who in all probability, was to become a thinking and reasoning animal might refuse to comply with a compact--"
+            n "--made before her creation. She could, infact, become ten thousand times more malignant than her mate and revel in murder and wretchedness"
             return
-        "c) Elizabeth’s promise to wait for him in Geneva":
-            call lose_heart
+        "c) He did not swear on a bible when promising the monster a bride. As a result, the promise is null and void":
+            call lose_heart from _call_lose_heart_3
             jump trivia_2
 
 label trivia_3:
     # About offspring / race of devils
-    n "What future consequence most horrifies Victor as he imagines the pair together?"
+    n "Which sympathy that Creature yearn for horrifies Victor?"
     menu:
-        "a) That they will live quietly in the new world, forgotten by all":
-            call lose_heart
+        "a) The Monster thirsts for sympathy from Victor, this horrifies Victor as he does not want to pay child support for his creation":
+            call lose_heart from _call_lose_heart_4
             jump trivia_3
-        "b) That they will have children and propagate a race of devils upon the earth":
+        "b) The monster yearns for children.":
             play sound audio.correct_sfx
-            n "He imagines future generations cursing him for unleashing such a race."
+            n "Thats correct! This horrifies Victor he believes thirst for such sympathies will result in a propogating a race of devils upon the Earth"
             return
-        "c) That they will become celebrated curiosities in human society":
-            call lose_heart
+        "c) The monster yearns for sympathy and empathy from humankind because he wants to feel a sense of belonging to battle his depressing solitude":
+            call lose_heart from _call_lose_heart_5
             jump trivia_3
 
 label trivia_4:
     # About moral responsibility shift
-    n "What changes in Victor’s understanding of his promise in this moment?"
+    n "Why does Victor imagine future ages cursing at him?"
     menu:
-        "a) He realises the creature never truly meant his threats.":
-            call lose_heart
+        "a) Because Victor did not share the knowledge of reanimation and potentially immortality with the world":
+            call lose_heart from _call_lose_heart_6
             jump trivia_4
-        "b) He sees for the first time that the wickedness lies in his own promise, not just in the creature’s demands.":
+        "b) Victor realises the opportunity cost of creating the bride for the sake of his innerpeace could mean the potential downfall of humanity as a result.":
             play sound audio.correct_sfx
-            n "He finally recognises that he himself may become the ‘pest’ of future ages."
+            n "Thats correct! The afformentioed reasons, by Victor, make it clear that risk posed by creating another Monster are too great to ignore"
             return
-        "c) He believes that time will erase his guilt regardless of his actions.":
-            call lose_heart
+        "c) Because the act of reanimation is a cardinal sin for which he will never be forgiven throughout eternity":
+            call lose_heart from _call_lose_heart_7
             jump trivia_4
 
 label trivia_5:
     n "How does the creature now describe the power between creator and created?"
     menu:
         "a) Victor remains master, and the creature is his humble servant.":
-            call lose_heart
+            call lose_heart from _call_lose_heart_8
             jump trivia_5
         "b) Victor is creator in name only; the creature now claims to be the true master through power to cause misery.":
             play sound audio.correct_sfx
             n "The creature insists he can make Victor so wretched that daylight will be hateful."
             return
         "c) They are equals who can reason calmly together.":
-            call lose_heart
+            call lose_heart from _call_lose_heart_9
             jump trivia_5
 
 label trivia_6:
@@ -673,14 +734,14 @@ label trivia_6:
     n "When the creature promises to be with him on his wedding-night, what thought finally brings Victor to tears?"
     menu:
         "a) His own death, which he accepts almost calmly.":
-            call lose_heart
+            call lose_heart from _call_lose_heart_10
             jump trivia_6
         "b) Elizabeth’s endless sorrow if she loses him so barbarously.":
             play sound audio.correct_sfx
             n "He weeps not for himself, but for the grief Elizabeth will endure."
             return
         "c) The possibility that the creature will forgive him.":
-            call lose_heart
+            call lose_heart from _call_lose_heart_11
             jump trivia_6
 
 # ------------------------------------------------------------
