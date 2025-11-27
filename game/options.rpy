@@ -25,7 +25,7 @@ define config.fast_skipping = False
 
 ## The version of the game.
 
-define config.version = "01000110 01110010 01100001 01101110 01101011 01100101 01101110 01110011 01110100 01100101 01101001 01101110 "
+define config.version = "1"
 
 
 ## Text that is placed on the game's about screen. Place the text between the
@@ -62,7 +62,7 @@ define gui.about = _p("""
 ## distribution. This must be ASCII-only, and must not contain spaces, colons,
 ## or semicolons.
 
-define build.name = "Frankenstein: The Game"
+define build.name = "FrankensteinGame"
 
 
 ## Sounds and music ############################################################
